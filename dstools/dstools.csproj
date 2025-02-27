@@ -11,6 +11,7 @@
     <ItemGroup>
         <Folder Include="Models\" />
         <AvaloniaResource Include="Assets\**" />
+        <AvaloniaResource Include="Assets\*.svg" />
     </ItemGroup>
 
     <ItemGroup>
@@ -25,6 +26,7 @@
         </PackageReference>
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
         <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.4" />
-        <PackageReference Include="System.Management" Version="10.0.0-preview.1.25080.5" />
+        <PackageReference Include="LucideAvalonia" Version="1.6.1" />
+        <PackageReference Include="Avalonia.Svg.Skia" Version="11.0.0.13" />
     </ItemGroup>
 </Project>

@@ -6,78 +6,68 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
         x:Class="dstools.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
+        xmlns:lucideAvalonia="clr-namespace:LucideAvalonia;assembly=LucideAvalonia"
         Icon="/Assets/avalonia-logo.ico"
-        Title="系统硬件监控">
+        Title="系统硬件信息"
+        Width="500"
+        Height="400">
 
     <Design.DataContext>
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
     <Window.Styles>
-        <Style Selector="Border.card">
+        <Style Selector="Border.item">
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="Margin" Value="5"/>
             <Setter Property="Background" Value="#2D2D30"/>
-            <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="Padding" Value="15"/>
-            <Setter Property="Margin" Value="10"/>
         </Style>
-        <Style Selector="TextBlock.header">
-            <Setter Property="FontSize" Value="18"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Margin" Value="0,0,0,10"/>
+        <Style Selector="PathIcon">
+            <Setter Property="Width" Value="20"/>
+            <Setter Property="Height" Value="20"/>
+            <Setter Property="Margin" Value="0,0,10,0"/>
+            <Setter Property="Foreground" Value="White"/>
         </Style>
-        <Style Selector="TextBlock.info">
-            <Setter Property="Margin" Value="0,5"/>
+        <Style Selector="TextBlock.title">
+            <Setter Property="Margin" Value="5, 0, 0, 0" />
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Width" Value="80"/>
+            <Setter Property="Foreground" Value="#888888"/>
+        </Style>
+        <Style Selector="TextBlock.value">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="White"/>
         </Style>
     </Window.Styles>
 
-    <Grid Background="#1E1E1E">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+    <Border Background="#1E1E1E" Padding="10">
+        <StackPanel>
+            <!-- CPU -->
+            <Border Classes="item">
+                <Grid ColumnDefinitions="Auto, Auto, *">
+                    <lucideAvalonia:Lucide Grid.Column="0" Icon="Cpu" StrokeBrush="White" StrokeThickness="1.5" Width="22" Height="22"/>
+                    <TextBlock Grid.Column="1" Classes="title" Text="处理器" />
+                    <TextBlock Grid.Column="2" Classes="value" Text="{Binding CpuName}"/>
+                </Grid>
+            </Border>
 
-        <!-- CPU 信息 -->
-        <Border Grid.Row="0" Grid.Column="0" Classes="card">
-            <StackPanel>
-                <TextBlock Classes="header" Text="CPU 信息" Foreground="White"/>
-                <TextBlock Classes="info" Text="{Binding CpuName}" Foreground="White"/>
-                <TextBlock Classes="info" Text="{Binding CpuUsage, StringFormat='CPU使用率: {0}%'}" Foreground="White"/>
-                <TextBlock Classes="info" Text="{Binding CpuTemperature, StringFormat='温度: {0}°C'}" Foreground="White"/>
-            </StackPanel>
-        </Border>
+            <!-- GPU -->
+            <Border Classes="item">
+                <Grid ColumnDefinitions="Auto,Auto,*">
+                    <lucideAvalonia:Lucide Grid.Column="0" Icon="Microchip" StrokeBrush="White" StrokeThickness="1.5" Width="22" Height="22"/>
+                    <TextBlock Grid.Column="1" Classes="title" Text="显卡"/>
+                    <TextBlock Grid.Column="2" Classes="value" Text="{Binding GpuName}"/>
+                </Grid>
+            </Border>
 
-        <!-- GPU 信息 -->
-        <Border Grid.Row="0" Grid.Column="1" Classes="card">
-            <StackPanel>
-                <TextBlock Classes="header" Text="GPU 信息" Foreground="White"/>
-                <TextBlock Classes="info" Text="{Binding GpuName}" Foreground="White"/>
-                <TextBlock Classes="info" Text="{Binding GpuUsage, StringFormat='GPU使用率: {0}%'}" Foreground="White"/>
-                <TextBlock Classes="info" Text="{Binding GpuTemperature, StringFormat='温度: {0}°C'}" Foreground="White"/>
-            </StackPanel>
-        </Border>
-
-        <!-- 内存信息 -->
-        <Border Grid.Row="1" Grid.Column="0" Classes="card">
-            <StackPanel>
-                <TextBlock Classes="header" Text="内存信息" Foreground="White"/>
-                <TextBlock Classes="info" Text="{Binding TotalMemory, StringFormat='总内存: {0} GB'}" Foreground="White"/>
-                <TextBlock Classes="info" Text="{Binding UsedMemory, StringFormat='已使用: {0} GB'}" Foreground="White"/>
-                <TextBlock Classes="info" Text="{Binding MemoryUsage, StringFormat='使用率: {0}%'}" Foreground="White"/>
-            </StackPanel>
-        </Border>
-
-        <!-- 磁盘信息 -->
-        <Border Grid.Row="1" Grid.Column="1" Classes="card">
-            <StackPanel>
-                <TextBlock Classes="header" Text="磁盘信息" Foreground="White"/>
-                <TextBlock Classes="info" Text="{Binding DiskModel}" Foreground="White"/>
-                <TextBlock Classes="info" Text="{Binding TotalSpace, StringFormat='总空间: {0} GB'}" Foreground="White"/>
-                <TextBlock Classes="info" Text="{Binding UsedSpace, StringFormat='已使用: {0} GB'}" Foreground="White"/>
-            </StackPanel>
-        </Border>
-    </Grid>
+            <!-- Memory -->
+            <Border Classes="item">
+                <Grid ColumnDefinitions="Auto,Auto,*">
+                    <lucideAvalonia:Lucide Grid.Column="0" Icon="MemoryStick" StrokeBrush="White" StrokeThickness="1.5" Width="22" Height="22"/>
+                    <TextBlock Grid.Column="1" Classes="title" Text="内存"/>
+                    <TextBlock Grid.Column="2" Classes="value" Text="{Binding TotalMemory, StringFormat={}{0:F1} GB}"/>
+                </Grid>
+            </Border>
+        </StackPanel>
+    </Border>
 </Window>

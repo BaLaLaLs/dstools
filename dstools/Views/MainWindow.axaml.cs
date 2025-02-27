@@ -7,8 +7,6 @@ namespace dstools.Views;
 
 public partial class MainWindow : Window
 {
-    private string? CPUName;
-
     public MainWindow()
     {
         InitializeComponent();

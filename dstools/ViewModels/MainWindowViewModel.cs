@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using LibreHardwareMonitor.Hardware;
 using System;
 
 namespace dstools.ViewModels;
@@ -6,7 +7,7 @@ namespace dstools.ViewModels;
 public partial class MainWindowViewModel : ObservableObject
 {
     [ObservableProperty]
-    private string _cpuName = "Intel Core i7-12700K";
+    private string _cpuName = string.Empty;
 
     [ObservableProperty]
     private double _cpuUsage = 0;
@@ -15,7 +16,7 @@ public partial class MainWindowViewModel : ObservableObject
     private double _cpuTemperature = 0;
     
     [ObservableProperty]
-    private string _gpuName = "NVIDIA RTX 3080";
+    private string _gpuName = string.Empty;
 
     [ObservableProperty]
     private double _gpuUsage = 0;
@@ -41,30 +42,52 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty]
     private double _usedSpace = 0;
 
+    private Computer _computer;
+
     public MainWindowViewModel()
     {
-        StartHardwareMonitoring();
+        InitializeHardwareMonitor();
     }
 
-    private void StartHardwareMonitoring()
+    private void InitializeHardwareMonitor()
     {
-        var timer = new System.Timers.Timer(1000);
-        timer.Elapsed += (sender, args) =>
+        _computer = new Computer
         {
-            UpdateHardwareInfo();
+            IsCpuEnabled = true,
+            IsGpuEnabled = true,
+            IsMemoryEnabled = true
         };
-        timer.Start();
+        
+        _computer.Open();
+        UpdateHardwareInfo();
+        _computer.Close();
     }
 
     private void UpdateHardwareInfo()
     {
-        Random rand = new Random();
-        CpuUsage = rand.Next(0, 100);
-        CpuTemperature = 40 + rand.Next(0, 30);
-        GpuUsage = rand.Next(0, 100);
-        GpuTemperature = 35 + rand.Next(0, 35);
-        UsedMemory = rand.Next(0, (int)TotalMemory);
-        MemoryUsage = (UsedMemory / TotalMemory) * 100;
-        UsedSpace = rand.Next(0, (int)TotalSpace);
+        foreach (var hardware in _computer.Hardware)
+        {
+            switch (hardware.HardwareType)
+            {
+                case HardwareType.Cpu:
+                    CpuName = hardware.Name;
+                    break;
+                case HardwareType.GpuNvidia:
+                case HardwareType.GpuIntel:
+                case HardwareType.GpuAmd:
+                    GpuName = hardware.Name;
+                    break;
+                case HardwareType.Memory:
+                    hardware.Update();
+                    foreach (var sensor in hardware.Sensors)
+                    {
+                        if (sensor.SensorType == SensorType.Data && sensor.Name == "Used Memory")
+                        {
+                            TotalMemory = sensor.Value ?? 0;
+                        }
+                    }
+                    break;
+            }
+        }
     }
 }
