@@ -3,9 +3,24 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using LibreHardwareMonitor.Hardware;
 using System.Diagnostics;
 using System.IO;
+using System.Net.Http;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Input;
 
 namespace dstools.ViewModels;
+
+public enum InstallStatus
+{
+    NotInstalled,    // 未安装
+    Installed        // 已安装
+}
+
+public enum RunningStatus
+{
+    Running,         // 运行中
+    Stopped          // 已停止
+}
 
 public partial class MainWindowViewModel : ObservableObject
 {
@@ -22,11 +37,13 @@ public partial class MainWindowViewModel : ObservableObject
     private double _totalMemory = 32;
 
     [ObservableProperty]
-    private string _ollamaStatus = "未启动";
+    private InstallStatus _installStatus = InstallStatus.NotInstalled;
+
+    [ObservableProperty]
+    private RunningStatus _runningStatus = RunningStatus.Stopped;
     
     [ObservableProperty]
     private string _ollamaVersion = string.Empty;
-
     private Computer _computer;
 
     public MainWindowViewModel()
@@ -91,11 +108,14 @@ public partial class MainWindowViewModel : ObservableObject
             string ollamaPath = GetOllamaPath();
             if (string.IsNullOrEmpty(ollamaPath))
             {
-                OllamaStatus = "未安装";
+                InstallStatus = InstallStatus.NotInstalled;
+                RunningStatus = RunningStatus.Stopped;
+                OllamaVersion = string.Empty;
                 return;
             }
 
-            var process = new Process
+            // 检查版本以确认安装状态
+            var versionProcess = new Process
             {
                 StartInfo = new ProcessStartInfo
                 {
@@ -107,19 +127,48 @@ public partial class MainWindowViewModel : ObservableObject
                 }
             };
 
-            process.Start();
-            string version = process.StandardOutput.ReadToEnd().Trim();
-            process.WaitForExit();
+            versionProcess.Start();
+            string version = versionProcess.StandardOutput.ReadToEnd().Trim();
+            versionProcess.WaitForExit();
 
-            if (!string.IsNullOrEmpty(version))
+            if (string.IsNullOrEmpty(version))
             {
-                OllamaVersion = version;
-                OllamaStatus = "已安装";
+                InstallStatus = InstallStatus.NotInstalled;
+                RunningStatus = RunningStatus.Stopped;
+                OllamaVersion = string.Empty;
+                return;
             }
+
+            const string prefix = "ollama version is ";
+            OllamaVersion = version.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) 
+                ? version[prefix.Length..].Trim() 
+                : version;
+
+            InstallStatus = InstallStatus.Installed;
+
+            // 检查运行状态
+            var psProcess = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "powershell",
+                    Arguments = "-Command \"Get-Process ollama -ErrorAction SilentlyContinue\"",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+
+            psProcess.Start();
+            string output = psProcess.StandardOutput.ReadToEnd();
+            psProcess.WaitForExit();
+
+            RunningStatus = !string.IsNullOrEmpty(output) ? RunningStatus.Running : RunningStatus.Stopped;
         }
         catch (Exception)
         {
-            OllamaStatus = "未安装";
+            InstallStatus = InstallStatus.NotInstalled;
+            RunningStatus = RunningStatus.Stopped;
             OllamaVersion = string.Empty;
         }
     }
@@ -171,5 +220,79 @@ public partial class MainWindowViewModel : ObservableObject
         }
 
         return string.Empty;
+    }
+    [ObservableProperty]
+    private double _downloadProgress = 0;
+
+    [ObservableProperty]
+    private bool _isDownloading = false;
+
+    [RelayCommand]
+    private async Task InstallOllama()
+    {
+        IsDownloading = true;
+        DownloadProgress = 0;
+        await DownloadAndInstallOllama();
+        IsDownloading = false;
+    }
+    private async Task DownloadAndInstallOllama()
+    {
+        try
+        {
+            string downloadUrl = "https://ghfast.top/https://github.com/ollama/ollama/releases/latest/download/OllamaSetup.exe";
+            string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            string setupPath = Path.Combine(appDirectory, "OllamaSetup.exe");
+
+            using (var client = new HttpClient())
+            {
+                using var response = await client.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead);
+                response.EnsureSuccessStatusCode();
+                var totalBytes = response.Content.Headers.ContentLength ?? -1L;
+
+                await using var stream = await response.Content.ReadAsStreamAsync();
+                await using var fileStream = new FileStream(setupPath, FileMode.Create, FileAccess.Write, FileShare.None);
+                var buffer = new byte[8192];
+                var totalBytesRead = 0L;
+                int bytesRead;
+
+                while ((bytesRead = await stream.ReadAsync(buffer)) > 0)
+                {
+                    await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead));
+                    totalBytesRead += bytesRead;
+                    if (totalBytes > 0)
+                    {
+                        DownloadProgress = (double)totalBytesRead / totalBytes * 100;
+                    }
+                }
+            }
+
+            // 启动安装程序
+            var process = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = setupPath,
+                    UseShellExecute = true,
+                    Verb = "runas" // 请求管理员权限
+                }
+            };
+            process.Start();
+
+            // 等待安装完成后删除安装文件
+            await Task.Run(() =>
+            {
+                process.WaitForExit();
+                if (File.Exists(setupPath))
+                {
+                    File.Delete(setupPath);
+                }
+                CheckOllamaStatus(); // 刷新安装状态
+            });
+        }
+        catch (Exception ex)
+        {
+            // 处理错误
+            Debug.WriteLine($"安装Ollama时发生错误: {ex.Message}");
+        }
     }
 }
