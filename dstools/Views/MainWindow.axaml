@@ -56,7 +56,11 @@
                 <Grid ColumnDefinitions="Auto,Auto,*">
                     <lucideAvalonia:Lucide Grid.Column="0" Icon="Microchip" StrokeBrush="White" StrokeThickness="1.5" Width="22" Height="22"/>
                     <TextBlock Grid.Column="1" Classes="title" Text="显卡"/>
-                    <TextBlock Grid.Column="2" Classes="value" Text="{Binding GpuName}"/>
+                    <StackPanel Grid.Column="2" Orientation="Horizontal">
+                        <TextBlock Classes="value" Text="{Binding GpuName}"/>
+                        <TextBlock Classes="value" Text=" 显存："/>
+                        <TextBlock Classes="value" Text="{Binding GpuMemory, StringFormat={}{0}G}"/>
+                    </StackPanel>
                 </Grid>
             </Border>
 
@@ -66,6 +70,22 @@
                     <lucideAvalonia:Lucide Grid.Column="0" Icon="MemoryStick" StrokeBrush="White" StrokeThickness="1.5" Width="22" Height="22"/>
                     <TextBlock Grid.Column="1" Classes="title" Text="内存"/>
                     <TextBlock Grid.Column="2" Classes="value" Text="{Binding TotalMemory, StringFormat={}{0:F1} GB}"/>
+                </Grid>
+            </Border>
+
+            <!-- Ollama -->
+            <Border Classes="item">
+                <Grid ColumnDefinitions="Auto,Auto,*">
+                    <Border Grid.Column="0" Background="White" CornerRadius="4">
+                        <Image Source="/Assets/ollama.png" Width="22" Height="22"/>
+                    </Border>
+                    <TextBlock Grid.Column="1" Classes="title" Text="Ollama"/>
+                    <StackPanel Grid.Column="2" Orientation="Horizontal">
+                        <TextBlock Classes="value" Text="状态："/>
+                        <TextBlock Classes="value" Text="{Binding OllamaStatus}" FontSize="12"/>
+                        <TextBlock Classes="value" Text=" 版本："/>
+                        <TextBlock Classes="value" Text="{Binding OllamaVersion}"/>
+                    </StackPanel>
                 </Grid>
             </Border>
         </StackPanel>
