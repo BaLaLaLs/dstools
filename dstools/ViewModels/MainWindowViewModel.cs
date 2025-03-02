@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LibreHardwareMonitor.Hardware;
 using System.Diagnostics;
@@ -375,4 +376,15 @@ public partial class MainWindowViewModel : ObservableObject
             Debug.WriteLine($"停止Ollama时发生错误: {ex.Message}");
         }
     }
+}
+public class TagsResponse
+{
+    public List<ModelInfo> Models { get; set; } = [];
+}
+
+public class ModelInfo
+{
+    public string Name { get; set; } = string.Empty;
+    public string ModifiedAt { get; set; } = string.Empty;
+    public long Size { get; set; }
 }

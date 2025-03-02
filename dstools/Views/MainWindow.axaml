@@ -108,6 +108,16 @@
                         <Button Classes="accent" Content="启动" Command="{Binding StartOllamaCommand}" IsVisible="{Binding InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}" IsEnabled="{Binding RunningStatus, Converter={StaticResource OllamaRunningStatusConverter}}" Margin="0,0,10,0"/>
                         <Button Classes="accent" Content="停止" Command="{Binding StopOllamaCommand}" IsVisible="{Binding InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}" IsEnabled="{Binding RunningStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaRunningStatusConverter}}"/>
                     </StackPanel>
+                    <StackPanel Margin="0,10,0,0" IsVisible="{Binding InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}">
+                        <TextBlock Classes="value" Text="已安装模型：" Margin="0,0,0,5"/>
+                        <ListBox ItemsSource="{Binding InstalledModels}" MaxHeight="150" Background="Transparent" BorderThickness="0">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}" Foreground="White"/>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
                 </StackPanel>
             </Border>
         </StackPanel>
