@@ -16,6 +16,7 @@
     <Window.Resources>
         <converters:OllamaStatusConverter x:Key="OllamaStatusConverter"/>
         <converters:OllamaNotInstalledConverter x:Key="OllamaNotInstalledConverter"/>
+        <converters:OllamaRunningStatusConverter x:Key="OllamaRunningStatusConverter"/>
     </Window.Resources>
 
     <Design.DataContext>
@@ -87,20 +88,25 @@
                             <Image Source="/Assets/ollama.png" Width="22" Height="22"/>
                         </Border>
                         <TextBlock Grid.Column="1" Classes="title" Text="Ollama"/>
-                        <StackPanel Grid.Column="2" Orientation="Horizontal">
-                            <TextBlock Classes="value" Text="状态："/>
-                            <TextBlock Classes="value" Text="{Binding InstallStatus, Converter={StaticResource OllamaStatusConverter}}" FontSize="12"/>
-                            <TextBlock Classes="value" Text=" 运行：" IsVisible="{Binding !InstallStatus, Converter={StaticResource OllamaNotInstalledConverter}}"/>
-                            <TextBlock Classes="value" Text="{Binding RunningStatus, Converter={StaticResource OllamaStatusConverter}}" FontSize="12" IsVisible="{Binding !InstallStatus, Converter={StaticResource OllamaNotInstalledConverter}}"/>
-                            <TextBlock Classes="value" Text=" 版本：" IsVisible="{Binding !InstallStatus, Converter={StaticResource OllamaNotInstalledConverter}}"/>
-                            <TextBlock Classes="value" Text="{Binding OllamaVersion}" IsVisible="{Binding !InstallStatus, Converter={StaticResource OllamaNotInstalledConverter}}"/>
+                        <StackPanel Grid.Column="2" Orientation="Vertical">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Classes="value" Text="安装状态："/>
+                                <TextBlock Classes="value" Text="{Binding InstallStatus, Converter={StaticResource OllamaStatusConverter}}" FontSize="12"/>
+                                <TextBlock Classes="value" Text="   运行状态：" IsVisible="{Binding InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}"/>
+                                <TextBlock Classes="value" Text="{Binding RunningStatus, Converter={StaticResource OllamaStatusConverter}}" FontSize="12" IsVisible="{Binding InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" IsVisible="{Binding !InstallStatus, Converter={StaticResource OllamaNotInstalledConverter}}">
+                                <TextBlock Classes="value" Text="版本："/>
+                                <TextBlock Classes="value" Text="{Binding OllamaVersion}"/>
+                            </StackPanel>
                         </StackPanel>
                     </Grid>
                     <StackPanel Orientation="Horizontal" Margin="0,10,0,0" HorizontalAlignment="Right">
                         <Button Classes="accent" Content="安装" Command="{Binding InstallOllamaCommand}" Margin="0,0,10,0" IsVisible="{Binding InstallStatus, Converter={StaticResource OllamaNotInstalledConverter}}"/>
                         <ProgressBar Value="{Binding DownloadProgress}" Width="100" Height="2" IsVisible="{Binding IsDownloading}" Margin="0,0,10,0"/>
-                        <Button Content="启动" IsVisible="{Binding !InstallStatus, Converter={StaticResource OllamaNotInstalledConverter}}" IsEnabled="{Binding !RunningStatus}" Margin="0,0,10,0"/>
-                        <Button Content="停止" IsVisible="{Binding !InstallStatus, Converter={StaticResource OllamaNotInstalledConverter}}" IsEnabled="{Binding RunningStatus}"/>
+                        <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" IsVisible="{Binding HasError}" Margin="0,0,10,0"/>
+                        <Button Classes="accent" Content="启动" Command="{Binding StartOllamaCommand}" IsVisible="{Binding InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}" IsEnabled="{Binding RunningStatus, Converter={StaticResource OllamaRunningStatusConverter}}" Margin="0,0,10,0"/>
+                        <Button Classes="accent" Content="停止" Command="{Binding StopOllamaCommand}" IsVisible="{Binding InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}" IsEnabled="{Binding RunningStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaRunningStatusConverter}}"/>
                     </StackPanel>
                 </StackPanel>
             </Border>

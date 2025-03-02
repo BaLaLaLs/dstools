@@ -227,10 +227,18 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty]
     private bool _isDownloading = false;
 
+    [ObservableProperty]
+    private bool _hasError = false;
+
+    [ObservableProperty]
+    private string _errorMessage = string.Empty;
+
     [RelayCommand]
     private async Task InstallOllama()
     {
         IsDownloading = true;
+        HasError = false;
+        ErrorMessage = string.Empty;
         DownloadProgress = 0;
         await DownloadAndInstallOllama();
         IsDownloading = false;
@@ -291,8 +299,80 @@ public partial class MainWindowViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            // 处理错误
+            HasError = true;
+            ErrorMessage = $"下载安装包失败：{ex.Message}";
             Debug.WriteLine($"安装Ollama时发生错误: {ex.Message}");
+            DownloadProgress = 0;
+        }
+    }
+    [RelayCommand]
+    private void StartOllama()
+    {
+        try
+        {
+            string ollamaPath = GetOllamaPath();
+            if (string.IsNullOrEmpty(ollamaPath))
+            {
+                HasError = true;
+                ErrorMessage = "未找到Ollama程序";
+                return;
+            }
+
+            var process = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = ollamaPath,
+                    Arguments = "serve",
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+
+            process.Start();
+            RunningStatus = RunningStatus.Running;
+            HasError = false;
+            ErrorMessage = string.Empty;
+        }
+        catch (Exception ex)
+        {
+            HasError = true;
+            ErrorMessage = $"启动Ollama失败：{ex.Message}";
+            Debug.WriteLine($"启动Ollama时发生错误: {ex.Message}");
+        }
+    }
+    
+    [RelayCommand]
+    private void StopOllama()
+    {
+        try
+        {
+            // 使用PowerShell命令终止Ollama进程
+            var psProcess = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "powershell",
+                    Arguments = "-Command \"Stop-Process -Name ollama -Force -ErrorAction SilentlyContinue\"",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+
+            psProcess.Start();
+            psProcess.WaitForExit();
+            
+            // 更新状态
+            RunningStatus = RunningStatus.Stopped;
+            HasError = false;
+            ErrorMessage = string.Empty;
+        }
+        catch (Exception ex)
+        {
+            HasError = true;
+            ErrorMessage = $"停止Ollama失败：{ex.Message}";
+            Debug.WriteLine($"停止Ollama时发生错误: {ex.Message}");
         }
     }
 }
