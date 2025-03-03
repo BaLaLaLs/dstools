@@ -8,6 +8,10 @@ using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace dstools.ViewModels;
 
@@ -47,10 +51,32 @@ public partial class MainWindowViewModel : ObservableObject
     private string _ollamaVersion = string.Empty;
     private Computer _computer;
 
+    [ObservableProperty]
+    private ObservableCollection<string> _installedModels = new();
+
+    private System.Timers.Timer? _modelRefreshTimer;
+
     public MainWindowViewModel()
     {
         InitializeHardwareMonitor();
         CheckOllamaStatus();
+        
+        // 如果 Ollama 已安装，则获取模型列表
+        if (InstallStatus == InstallStatus.Installed)
+        {
+            _ = FetchInstalledModels();
+            
+            // 设置定时器，每30秒刷新一次模型列表
+            _modelRefreshTimer = new System.Timers.Timer(30000);
+            _modelRefreshTimer.Elapsed += async (s, e) => 
+            {
+                if (RunningStatus == RunningStatus.Running)
+                {
+                    await FetchInstalledModels();
+                }
+            };
+            _modelRefreshTimer.Start();
+        }
     }
 
     private void InitializeHardwareMonitor()
@@ -171,6 +197,26 @@ public partial class MainWindowViewModel : ObservableObject
             InstallStatus = InstallStatus.NotInstalled;
             RunningStatus = RunningStatus.Stopped;
             OllamaVersion = string.Empty;
+        }
+        
+        // 在状态检查后，如果 Ollama 正在运行，则获取模型列表
+        if (InstallStatus == InstallStatus.Installed && RunningStatus == RunningStatus.Running)
+        {
+            _ = FetchInstalledModels();
+            
+            // 如果定时器尚未创建，则创建定时器
+            if (_modelRefreshTimer == null)
+            {
+                _modelRefreshTimer = new System.Timers.Timer(30000);
+                _modelRefreshTimer.Elapsed += async (s, e) => 
+                {
+                    if (RunningStatus == RunningStatus.Running)
+                    {
+                        await FetchInstalledModels();
+                    }
+                };
+                _modelRefreshTimer.Start();
+            }
         }
     }
 
@@ -307,7 +353,7 @@ public partial class MainWindowViewModel : ObservableObject
         }
     }
     [RelayCommand]
-    private void StartOllama()
+    private async Task StartOllama()
     {
         try
         {
@@ -334,6 +380,26 @@ public partial class MainWindowViewModel : ObservableObject
             RunningStatus = RunningStatus.Running;
             HasError = false;
             ErrorMessage = string.Empty;
+            
+            // 等待 Ollama 服务启动
+            await Task.Delay(2000);
+            
+            // 获取模型列表
+            await FetchInstalledModels();
+            
+            // 如果定时器尚未创建，则创建定时器
+            if (_modelRefreshTimer == null)
+            {
+                _modelRefreshTimer = new System.Timers.Timer(30000);
+                _modelRefreshTimer.Elapsed += async (s, e) => 
+                {
+                    if (RunningStatus == RunningStatus.Running)
+                    {
+                        await FetchInstalledModels();
+                    }
+                };
+                _modelRefreshTimer.Start();
+            }
         }
         catch (Exception ex)
         {
@@ -368,6 +434,9 @@ public partial class MainWindowViewModel : ObservableObject
             RunningStatus = RunningStatus.Stopped;
             HasError = false;
             ErrorMessage = string.Empty;
+            
+            // 清空模型列表
+            InstalledModels.Clear();
         }
         catch (Exception ex)
         {
@@ -376,15 +445,120 @@ public partial class MainWindowViewModel : ObservableObject
             Debug.WriteLine($"停止Ollama时发生错误: {ex.Message}");
         }
     }
+
+    // 添加获取已安装模型的方法
+    private async Task FetchInstalledModels()
+    {
+        try
+        {
+            using var client = new HttpClient();
+            client.Timeout = TimeSpan.FromSeconds(5);
+            
+            Debug.WriteLine("正在尝试获取模型列表...");
+            
+            var response = await client.GetAsync("http://localhost:11434/api/tags");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine($"API 响应内容: {content}");
+                
+                if (string.IsNullOrEmpty(content))
+                {
+                    Debug.WriteLine("API 响应内容为空");
+                    InstalledModels.Clear();
+                    return;
+                }
+                
+                try
+                {
+                    // 使用源生成的序列化器
+                    var tagsResponse = JsonSerializer.Deserialize(content, OllamaJsonContext.Default.TagsResponse);
+                    
+                    if (tagsResponse != null && tagsResponse.Models.Count > 0)
+                    {
+                        var modelNames = tagsResponse.Models
+                            .Select(m => m.Name)
+                            .OrderBy(name => name)
+                            .ToList();
+                        
+                        Debug.WriteLine($"找到 {modelNames.Count} 个模型");
+                        
+                        // 在UI线程上更新集合
+                        await Task.Run(() => 
+                        {
+                            InstalledModels.Clear();
+                            foreach (var model in modelNames)
+                            {
+                                InstalledModels.Add(model);
+                            }
+                        });
+                    }
+                    else
+                    {
+                        Debug.WriteLine("未找到模型或解析失败");
+                        InstalledModels.Clear();
+                    }
+                }
+                catch (JsonException ex)
+                {
+                    Debug.WriteLine($"JSON 解析错误: {ex.Message}");
+                    Debug.WriteLine($"JSON 内容: {content}");
+                    InstalledModels.Clear();
+                }
+            }
+            else
+            {
+                Debug.WriteLine($"API 请求失败，状态码: {response.StatusCode}");
+                InstalledModels.Clear();
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            Debug.WriteLine($"HTTP 请求错误: {ex.Message}");
+            InstalledModels.Clear();
+        }
+        catch (TaskCanceledException)
+        {
+            Debug.WriteLine("请求超时");
+            InstalledModels.Clear();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"获取模型列表时出错: {ex.Message}");
+            InstalledModels.Clear();
+        }
+    }
 }
+
+[JsonSerializable(typeof(TagsResponse))]
+[JsonSerializable(typeof(List<ModelInfo>))]
+[JsonSerializable(typeof(ModelInfo))]
+partial class OllamaJsonContext : JsonSerializerContext
+{
+}
+
 public class TagsResponse
 {
-    public List<ModelInfo> Models { get; set; } = [];
+    [JsonPropertyName("models")]
+    public List<ModelInfo> Models { get; set; } = new();
 }
 
 public class ModelInfo
 {
+    [JsonPropertyName("name")]
     public string Name { get; set; } = string.Empty;
+
+    [JsonPropertyName("model")]
+    public string Model { get; set; } = string.Empty;
+
+    [JsonPropertyName("modified_at")]
     public string ModifiedAt { get; set; } = string.Empty;
+
+    [JsonPropertyName("size")]
     public long Size { get; set; }
+
+    [JsonPropertyName("digest")]
+    public string Digest { get; set; } = string.Empty;
+
 }
