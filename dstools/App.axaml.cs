@@ -4,13 +4,17 @@ using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
 using System.Linq;
 using Avalonia.Markup.Xaml;
+using dstools.Services;
 using dstools.ViewModels;
 using dstools.Views;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace dstools;
 
 public partial class App : Application
 {
+    private ServiceProvider? _serviceProvider;
+    
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -18,14 +22,29 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
+        // 设置依赖注入
+        var services = new ServiceCollection();
+        
+        // 注册服务
+        services.AddSingleton<IHardwareService, HardwareService>();
+        services.AddSingleton<IOllamaService, OllamaService>();
+        
+        // 注册 ViewModel
+        services.AddTransient<MainWindowViewModel>();
+        
+        _serviceProvider = services.BuildServiceProvider();
+
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            // Avoid duplicate validations from both Avalonia and the CommunityToolkit. 
-            // More info: https://docs.avaloniaui.net/docs/guides/development-guides/data-validation#manage-validationplugins
+            // 避免 Avalonia 和 CommunityToolkit 的重复验证
             DisableAvaloniaDataAnnotationValidation();
+            
+            // 从服务容器中获取 ViewModel
+            var viewModel = _serviceProvider.GetRequiredService<MainWindowViewModel>();
+            
             desktop.MainWindow = new MainWindow
             {
-                DataContext = new MainWindowViewModel(),
+                DataContext = viewModel
             };
         }
 

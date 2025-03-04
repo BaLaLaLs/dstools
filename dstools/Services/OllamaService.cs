@@ -1,0 +1,315 @@
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Net.Http;
+using System.Runtime.InteropServices;
+using System.Text.Json;
+using System.Threading.Tasks;
+using dstools.Models;
+using dstools.ViewModels;
+
+namespace dstools.Services;
+
+public class OllamaService : IOllamaService
+{
+    private readonly HttpClient _httpClient;
+    private readonly JsonSerializerOptions _jsonOptions;
+
+    public OllamaService()
+    {
+        _httpClient = new HttpClient
+        {
+            Timeout = TimeSpan.FromSeconds(5)
+        };
+        
+        _jsonOptions = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+    }
+
+    public async Task<OllamaInfo> GetOllamaInfo()
+    {
+        var info = new OllamaInfo();
+        
+        try 
+        {
+            string ollamaPath = GetOllamaPath();
+            if (string.IsNullOrEmpty(ollamaPath))
+            {
+                info.InstallStatus = InstallStatus.NotInstalled;
+                info.RunningStatus = RunningStatus.Stopped;
+                return info;
+            }
+
+            // 检查版本
+            var versionProcess = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = ollamaPath,
+                    Arguments = "--version",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+
+            versionProcess.Start();
+            string version = versionProcess.StandardOutput.ReadToEnd().Trim();
+            versionProcess.WaitForExit();
+
+            if (string.IsNullOrEmpty(version))
+            {
+                info.InstallStatus = InstallStatus.NotInstalled;
+                return info;
+            }
+
+            const string prefix = "ollama version is ";
+            info.Version = version.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) 
+                ? version[prefix.Length..].Trim() 
+                : version;
+
+            info.InstallStatus = InstallStatus.Installed;
+
+            // 检查运行状态
+            var psProcess = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "powershell",
+                    Arguments = "-Command \"Get-Process ollama -ErrorAction SilentlyContinue\"",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+
+            psProcess.Start();
+            string output = psProcess.StandardOutput.ReadToEnd();
+            psProcess.WaitForExit();
+
+            info.RunningStatus = !string.IsNullOrEmpty(output) ? RunningStatus.Running : RunningStatus.Stopped;
+
+            // 如果正在运行，获取已安装的模型
+            if (info.RunningStatus == RunningStatus.Running)
+            {
+                info.InstalledModels = await GetInstalledModels();
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"获取Ollama信息时出错: {ex.Message}");
+            info.InstallStatus = InstallStatus.NotInstalled;
+            info.RunningStatus = RunningStatus.Stopped;
+        }
+
+        return info;
+    }
+
+    public async Task<bool> InstallOllama(IProgress<double> progress)
+    {
+        try
+        {
+            string downloadUrl = "https://ghfast.top/https://github.com/ollama/ollama/releases/latest/download/OllamaSetup.exe";
+            string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            string setupPath = Path.Combine(appDirectory, "OllamaSetup.exe");
+
+            using var response = await _httpClient.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead);
+            response.EnsureSuccessStatusCode();
+            var totalBytes = response.Content.Headers.ContentLength ?? -1L;
+
+            await using var stream = await response.Content.ReadAsStreamAsync();
+            await using var fileStream = new FileStream(setupPath, FileMode.Create, FileAccess.Write, FileShare.None);
+            var buffer = new byte[8192];
+            var totalBytesRead = 0L;
+            int bytesRead;
+
+            while ((bytesRead = await stream.ReadAsync(buffer)) > 0)
+            {
+                await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead));
+                totalBytesRead += bytesRead;
+                if (totalBytes > 0)
+                {
+                    progress.Report((double)totalBytesRead / totalBytes * 100);
+                }
+            }
+
+            var process = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = setupPath,
+                    UseShellExecute = true,
+                    Verb = "runas"
+                }
+            };
+            process.Start();
+            await Task.Run(() =>
+            {
+                process.WaitForExit();
+                if (File.Exists(setupPath))
+                {
+                    File.Delete(setupPath);
+                }
+            });
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"安装Ollama时出错: {ex.Message}");
+            return false;
+        }
+    }
+
+    public async Task<bool> StartOllama()
+    {
+        try
+        {
+            string ollamaPath = GetOllamaPath();
+            if (string.IsNullOrEmpty(ollamaPath))
+            {
+                return false;
+            }
+
+            var process = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = ollamaPath,
+                    Arguments = "serve",
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+
+            process.Start();
+            await Task.Delay(2000); // 等待服务启动
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"启动Ollama时出错: {ex.Message}");
+            return false;
+        }
+    }
+
+    public async Task<bool> StopOllama()
+    {
+        try
+        {
+            var psProcess = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "powershell",
+                    Arguments = "-Command \"Stop-Process -Name ollama -Force -ErrorAction SilentlyContinue\"",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+
+            psProcess.Start();
+            await Task.Run(() => psProcess.WaitForExit());
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"停止Ollama时出错: {ex.Message}");
+            return false;
+        }
+    }
+
+    public async Task<List<string>> GetInstalledModels()
+    {
+        var models = new List<string>();
+        try
+        {
+            var response = await _httpClient.GetAsync("http://localhost:11434/api/tags");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                if (!string.IsNullOrEmpty(content))
+                {
+                    using var document = JsonDocument.Parse(content);
+                    var root = document.RootElement;
+                    
+                    if (root.TryGetProperty("models", out var modelsElement) && 
+                        modelsElement.ValueKind == JsonValueKind.Array)
+                    {
+                        foreach (var model in modelsElement.EnumerateArray())
+                        {
+                            if (model.TryGetProperty("name", out var nameElement))
+                            {
+                                var name = nameElement.GetString();
+                                if (!string.IsNullOrEmpty(name))
+                                {
+                                    models.Add(name);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"获取模型列表时出错: {ex.Message}");
+        }
+        
+        return models;
+    }
+
+    private string GetOllamaPath()
+    {
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            // 检查默认安装路径
+            string programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+            string ollamaPath = Path.Combine(programFiles, "ollama", "ollama.exe");
+            
+            if (File.Exists(ollamaPath))
+            {
+                return ollamaPath;
+            }
+
+            // 检查 PATH 环境变量
+            string pathEnv = Environment.GetEnvironmentVariable("PATH") ?? string.Empty;
+            foreach (string path in pathEnv.Split(Path.PathSeparator))
+            {
+                string fullPath = Path.Combine(path, "ollama.exe");
+                if (File.Exists(fullPath))
+                {
+                    return fullPath;
+                }
+            }
+        }
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || 
+                 RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        {
+            // Unix-like 系统通常安装在 /usr/local/bin
+            string ollamaPath = "/usr/local/bin/ollama";
+            if (File.Exists(ollamaPath))
+            {
+                return ollamaPath;
+            }
+
+            // 检查 PATH 环境变量
+            string pathEnv = Environment.GetEnvironmentVariable("PATH") ?? string.Empty;
+            foreach (string path in pathEnv.Split(Path.PathSeparator))
+            {
+                string fullPath = Path.Combine(path, "ollama");
+                if (File.Exists(fullPath))
+                {
+                    return fullPath;
+                }
+            }
+        }
+
+        return string.Empty;
+    }
+} 
