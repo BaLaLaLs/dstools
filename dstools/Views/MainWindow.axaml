@@ -76,7 +76,7 @@
                 <Grid ColumnDefinitions="Auto,Auto,*">
                     <lucideAvalonia:Lucide Grid.Column="0" Icon="MemoryStick" StrokeBrush="White" StrokeThickness="1.5" Width="22" Height="22"/>
                     <TextBlock Grid.Column="1" Classes="title" Text="内存"/>
-                    <TextBlock Grid.Column="2" Classes="value" Text="{Binding HardwareInfo.TotalMemory, StringFormat={}{0:F1} GB}"/>
+                    <TextBlock Grid.Column="2" Classes="value" Text="{Binding HardwareInfo.TotalMemory, StringFormat={}{0:F0} GB}"/>
                 </Grid>
             </Border>
 

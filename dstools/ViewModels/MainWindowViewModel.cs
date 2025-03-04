@@ -110,9 +110,10 @@ public partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private async Task StopOllama()
     {
-            HasError = false;
-            ErrorMessage = string.Empty;
-            
+        HasError = false;
+        ErrorMessage = string.Empty;
+        // 获取硬件信息
+        HardwareInfo = _hardwareService.GetHardwareInfo();
         var success = await _ollamaService.StopOllama();
         if (!success)
         {

@@ -46,13 +46,23 @@ public class HardwareService : IHardwareService
                     }
                     break;
                 case HardwareType.Memory:
+                    double memoryAvailable = 0;
+                    double memoryUsed = 0;
                     foreach (var sensor in hardware.Sensors)
                     {
-                        if (sensor.SensorType == SensorType.Data && sensor.Name == "Memory Used")
+                        if (sensor.SensorType == SensorType.Data)
                         {
-                            info.TotalMemory = sensor.Value ?? 0;
+                            if (sensor.Name == "Memory Available")
+                            {
+                                memoryAvailable = sensor.Value ?? 0;
+                            }
+                            else if (sensor.Name == "Memory Used")
+                            {
+                                memoryUsed = sensor.Value ?? 0;
+                            }
                         }
                     }
+                    info.TotalMemory = Math.Ceiling(memoryAvailable + memoryUsed);
                     break;
             }
         }
@@ -60,4 +70,4 @@ public class HardwareService : IHardwareService
         
         return info;
     }
-} 
+}
