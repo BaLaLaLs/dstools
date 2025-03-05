@@ -163,25 +163,49 @@ public partial class MainWindowViewModel : ObservableObject
         // 刷新模型列表
         OllamaInfo = await _ollamaService.GetOllamaInfo();
     }
+
     [RelayCommand]
     private async Task SelectModelPath()
     {
         try
         {
             // 使用 Avalonia 的文件夹选择对话框
-            var mainWindow = App.Current?.ApplicationLifetime is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop
-                ? desktop.MainWindow
-                : null;
+            var mainWindow =
+                App.Current?.ApplicationLifetime is
+                    Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop
+                    ? desktop.MainWindow
+                    : null;
             if (mainWindow == null)
             {
                 HasError = true;
                 ErrorMessage = "无法获取主窗口";
                 return;
             }
+
             var storage = mainWindow.StorageProvider;
-            FolderPickerOpenOptions options = new FolderPickerOpenOptions();
-            await storage.OpenFolderPickerAsync(options);
-            
+            FolderPickerOpenOptions options = new();
+            var folders = await storage.OpenFolderPickerAsync(options);
+
+            if (folders.Count > 0)
+            {
+                var folder = folders[0];
+                var path = folder.Path.LocalPath;
+
+                if (!string.IsNullOrEmpty(path))
+                {
+                    OllamaInfo.ModelPath = path;
+
+                    // 设置环境变量，使 Ollama 使用新路径
+                    Environment.SetEnvironmentVariable("OLLAMA_MODELS", path, EnvironmentVariableTarget.User);
+
+                    // 如果 Ollama 正在运行，提示需要重启
+                    if (OllamaInfo.RunningStatus == RunningStatus.Running)
+                    {
+                        HasError = true;
+                        ErrorMessage = "模型路径已更改，请重启 Ollama 以应用更改";
+                    }
+                }
+            }
         }
         catch (Exception ex)
         {
