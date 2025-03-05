@@ -14,36 +14,36 @@
         Height="400">
 
     <Window.Resources>
-        <converters:OllamaStatusConverter x:Key="OllamaStatusConverter"/>
-        <converters:OllamaNotInstalledConverter x:Key="OllamaNotInstalledConverter"/>
-        <converters:OllamaRunningStatusConverter x:Key="OllamaRunningStatusConverter"/>
+        <converters:OllamaStatusConverter x:Key="OllamaStatusConverter" />
+        <converters:OllamaNotInstalledConverter x:Key="OllamaNotInstalledConverter" />
+        <converters:OllamaRunningStatusConverter x:Key="OllamaRunningStatusConverter" />
     </Window.Resources>
 
     <Design.DataContext>
-        <vm:MainWindowViewModel/>
+        <vm:MainWindowViewModel />
     </Design.DataContext>
 
     <Window.Styles>
         <Style Selector="Border.item">
-            <Setter Property="Padding" Value="10"/>
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="Background" Value="#2D2D30"/>
+            <Setter Property="Padding" Value="10" />
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="Background" Value="#2D2D30" />
         </Style>
         <Style Selector="PathIcon">
-            <Setter Property="Width" Value="20"/>
-            <Setter Property="Height" Value="20"/>
-            <Setter Property="Margin" Value="0,0,10,0"/>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Width" Value="20" />
+            <Setter Property="Height" Value="20" />
+            <Setter Property="Margin" Value="0,0,10,0" />
+            <Setter Property="Foreground" Value="White" />
         </Style>
         <Style Selector="TextBlock.title">
             <Setter Property="Margin" Value="5, 0, 0, 0" />
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Width" Value="80"/>
-            <Setter Property="Foreground" Value="#888888"/>
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Width" Value="80" />
+            <Setter Property="Foreground" Value="#888888" />
         </Style>
         <Style Selector="TextBlock.value">
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="White" />
         </Style>
     </Window.Styles>
 
@@ -52,21 +52,23 @@
             <!-- CPU -->
             <Border Classes="item">
                 <Grid ColumnDefinitions="Auto, Auto, *">
-                    <lucideAvalonia:Lucide Grid.Column="0" Icon="Cpu" StrokeBrush="White" StrokeThickness="1.5" Width="22" Height="22"/>
+                    <lucideAvalonia:Lucide Grid.Column="0" Icon="Cpu" StrokeBrush="White" StrokeThickness="1.5"
+                                           Width="22" Height="22" />
                     <TextBlock Grid.Column="1" Classes="title" Text="处理器" />
-                    <TextBlock Grid.Column="2" Classes="value" Text="{Binding HardwareInfo.CpuName}"/>
+                    <TextBlock Grid.Column="2" Classes="value" Text="{Binding HardwareInfo.CpuName}" />
                 </Grid>
             </Border>
 
             <!-- GPU -->
             <Border Classes="item">
                 <Grid ColumnDefinitions="Auto,Auto,*">
-                    <lucideAvalonia:Lucide Grid.Column="0" Icon="Microchip" StrokeBrush="White" StrokeThickness="1.5" Width="22" Height="22"/>
-                    <TextBlock Grid.Column="1" Classes="title" Text="显卡"/>
+                    <lucideAvalonia:Lucide Grid.Column="0" Icon="Microchip" StrokeBrush="White" StrokeThickness="1.5"
+                                           Width="22" Height="22" />
+                    <TextBlock Grid.Column="1" Classes="title" Text="显卡" />
                     <StackPanel Grid.Column="2" Orientation="Horizontal">
-                        <TextBlock Classes="value" Text="{Binding HardwareInfo.GpuName}"/>
-                        <TextBlock Classes="value" Text=" 显存："/>
-                        <TextBlock Classes="value" Text="{Binding HardwareInfo.GpuMemory, StringFormat={}{0}G}"/>
+                        <TextBlock Classes="value" Text="{Binding HardwareInfo.GpuName}" />
+                        <TextBlock Classes="value" Text=" 显存：" />
+                        <TextBlock Classes="value" Text="{Binding HardwareInfo.GpuMemory, StringFormat={}{0}G}" />
                     </StackPanel>
                 </Grid>
             </Border>
@@ -74,9 +76,11 @@
             <!-- Memory -->
             <Border Classes="item">
                 <Grid ColumnDefinitions="Auto,Auto,*">
-                    <lucideAvalonia:Lucide Grid.Column="0" Icon="MemoryStick" StrokeBrush="White" StrokeThickness="1.5" Width="22" Height="22"/>
-                    <TextBlock Grid.Column="1" Classes="title" Text="内存"/>
-                    <TextBlock Grid.Column="2" Classes="value" Text="{Binding HardwareInfo.TotalMemory, StringFormat={}{0:F0} GB}"/>
+                    <lucideAvalonia:Lucide Grid.Column="0" Icon="MemoryStick" StrokeBrush="White" StrokeThickness="1.5"
+                                           Width="22" Height="22" />
+                    <TextBlock Grid.Column="1" Classes="title" Text="内存" />
+                    <TextBlock Grid.Column="2" Classes="value"
+                               Text="{Binding HardwareInfo.TotalMemory, StringFormat={}{0:F0} GB}" />
                 </Grid>
             </Border>
 
@@ -85,69 +89,86 @@
                 <StackPanel>
                     <Grid ColumnDefinitions="Auto,Auto,*">
                         <Border Grid.Column="0" Background="White" CornerRadius="4">
-                            <Image Source="/Assets/ollama.png" Width="22" Height="22"/>
+                            <Image Source="/Assets/ollama.png" Width="22" Height="22" />
                         </Border>
-                        <TextBlock Grid.Column="1" Classes="title" Text="Ollama"/>
+                        <TextBlock Grid.Column="1" Classes="title" Text="Ollama" />
                         <StackPanel Grid.Column="2" Orientation="Vertical">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Classes="value" Text="安装状态："/>
-                                <TextBlock Classes="value" Text="{Binding OllamaInfo.InstallStatus, Converter={StaticResource OllamaStatusConverter}}" FontSize="12"/>
-                                <TextBlock Classes="value" Text="   运行状态：" IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}"/>
-                                <TextBlock Classes="value" Text="{Binding OllamaInfo.RunningStatus, Converter={StaticResource OllamaStatusConverter}}" FontSize="12" IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}"/>
+                                <TextBlock Classes="value" Text="安装状态：" />
+                                <TextBlock Classes="value"
+                                           Text="{Binding OllamaInfo.InstallStatus, Converter={StaticResource OllamaStatusConverter}}"
+                                           FontSize="12" />
+                                <TextBlock Classes="value" Text="   运行状态："
+                                           IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}" />
+                                <TextBlock Classes="value"
+                                           Text="{Binding OllamaInfo.RunningStatus, Converter={StaticResource OllamaStatusConverter}}"
+                                           FontSize="12"
+                                           IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}" />
                             </StackPanel>
-                            <StackPanel Orientation="Horizontal" IsVisible="{Binding !OllamaInfo.InstallStatus, Converter={StaticResource OllamaNotInstalledConverter}}">
-                                <TextBlock Classes="value" Text="版本："/>
-                                <TextBlock Classes="value" Text="{Binding OllamaInfo.Version}"/>
+                            <StackPanel Orientation="Horizontal"
+                                        IsVisible="{Binding !OllamaInfo.InstallStatus, Converter={StaticResource OllamaNotInstalledConverter}}">
+                                <TextBlock Classes="value" Text="版本：" />
+                                <TextBlock Classes="value" Text="{Binding OllamaInfo.Version}" />
                             </StackPanel>
                         </StackPanel>
                     </Grid>
                     <StackPanel Orientation="Horizontal" Margin="0,10,0,0" HorizontalAlignment="Right">
-                        <Button Classes="accent" Content="安装" Command="{Binding InstallOllamaCommand}" Margin="0,0,10,0" IsVisible="{Binding OllamaInfo.InstallStatus, Converter={StaticResource OllamaNotInstalledConverter}}"/>
-                        <ProgressBar Value="{Binding DownloadProgress}" Width="100" Height="2" IsVisible="{Binding IsDownloading}" Margin="0,0,10,0"/>
-                        <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" IsVisible="{Binding HasError}" Margin="0,0,10,0"/>
-                        <Button Classes="accent" Content="启动" Command="{Binding StartOllamaCommand}" IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}" IsEnabled="{Binding OllamaInfo.RunningStatus, Converter={StaticResource OllamaRunningStatusConverter}}" Margin="0,0,10,0"/>
-                        <Button Classes="accent" Content="停止" Command="{Binding StopOllamaCommand}" IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}" IsEnabled="{Binding OllamaInfo.RunningStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaRunningStatusConverter}}"/>
+                        <Button Classes="accent" Content="安装" Command="{Binding InstallOllamaCommand}"
+                                Margin="0,0,10,0"
+                                IsVisible="{Binding OllamaInfo.InstallStatus, Converter={StaticResource OllamaNotInstalledConverter}}" />
+                        <ProgressBar Value="{Binding DownloadProgress}" Width="100" Height="2"
+                                     IsVisible="{Binding IsDownloading}" Margin="0,0,10,0" />
+                        <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" IsVisible="{Binding HasError}"
+                                   Margin="0,0,10,0" />
+                        <Button Classes="accent" Content="启动" Command="{Binding StartOllamaCommand}"
+                                IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}"
+                                IsEnabled="{Binding OllamaInfo.RunningStatus, Converter={StaticResource OllamaRunningStatusConverter}}"
+                                Margin="0,0,10,0" />
+                        <Button Classes="accent" Content="停止" Command="{Binding StopOllamaCommand}"
+                                IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}"
+                                IsEnabled="{Binding OllamaInfo.RunningStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaRunningStatusConverter}}" />
                     </StackPanel>
-                    <StackPanel Margin="0,10,0,0" IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}">
+                    <StackPanel Margin="0,10,0,0"
+                                IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}">
                         <!-- 已安装模型列表 -->
-                        <TextBlock Classes="value" Text="已安装模型：" Margin="0,0,0,5"/>
+                        <TextBlock Classes="value" Text="已安装模型：" Margin="0,0,0,5" />
                         <Grid RowDefinitions="Auto,*" Margin="10,0,0,0">
                             <!-- 表头 -->
                             <Grid Grid.Row="0" ColumnDefinitions="*,100,150,Auto" Margin="5,0,0,5">
-                                <TextBlock Grid.Column="0" Text="模型名称" Foreground="#888888"/>
-                                <TextBlock Grid.Column="1" Text="大小" Foreground="#888888"/>
-                                <TextBlock Grid.Column="2" Text="修改时间" Foreground="#888888"/>
-                                <TextBlock Grid.Column="3" Text="操作" Foreground="#888888"/>
+                                <TextBlock Grid.Column="0" Text="模型名称" Foreground="#888888" />
+                                <TextBlock Grid.Column="1" Text="大小" Foreground="#888888" />
+                                <TextBlock Grid.Column="2" Text="修改时间" Foreground="#888888" />
+                                <TextBlock Grid.Column="3" Text="操作" Foreground="#888888" />
                             </Grid>
-                            
+
                             <!-- 表格内容 -->
                             <ScrollViewer Grid.Row="1" MaxHeight="150">
                                 <ItemsControl ItemsSource="{Binding OllamaInfo.InstalledModels}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <Border Background="#2D2D30" 
-                                                    Margin="0,2" 
-                                                    Padding="5" 
+                                            <Border Background="#2D2D30"
+                                                    Margin="0,2"
+                                                    Padding="5"
                                                     CornerRadius="4">
                                                 <Grid ColumnDefinitions="*,100,150,Auto">
-                                                    <TextBlock Grid.Column="0" 
-                                                             Text="{Binding Name}" 
-                                                             Foreground="White" 
-                                                             VerticalAlignment="Center"/>
-                                                    <TextBlock Grid.Column="1" 
-                                                             Text="{Binding Size, StringFormat={}{0:N1}GB}" 
-                                                             Foreground="White" 
-                                                             VerticalAlignment="Center"/>
-                                                    <TextBlock Grid.Column="2" 
-                                                             Text="{Binding ModifiedAt}" 
-                                                             Foreground="White"
-                                                             VerticalAlignment="Center"/>
+                                                    <TextBlock Grid.Column="0"
+                                                               Text="{Binding Name}"
+                                                               Foreground="White"
+                                                               VerticalAlignment="Center" />
+                                                    <TextBlock Grid.Column="1"
+                                                               Text="{Binding Size, StringFormat={}{0:N1}GB}"
+                                                               Foreground="White"
+                                                               VerticalAlignment="Center" />
+                                                    <TextBlock Grid.Column="2"
+                                                               Text="{Binding ModifiedAt}"
+                                                               Foreground="White"
+                                                               VerticalAlignment="Center" />
                                                     <Button Grid.Column="3"
                                                             Content="删除"
                                                             Classes="accent"
                                                             Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).DeleteModelCommand}"
                                                             CommandParameter="{Binding Name}"
-                                                            Margin="10,0,0,0"/>
+                                                            Margin="10,0,0,0" />
                                                 </Grid>
                                             </Border>
                                         </DataTemplate>
@@ -157,39 +178,39 @@
                         </Grid>
 
                         <!-- 可安装模型列表 -->
-                        <TextBlock Classes="value" Text="可安装模型：" Margin="0,15,0,5"/>
+                        <TextBlock Classes="value" Text="可安装模型：" Margin="0,15,0,5" />
                         <Grid RowDefinitions="Auto,*" Margin="10,0,0,0">
                             <!-- 表头 -->
                             <Grid Grid.Row="0" ColumnDefinitions="*,100,Auto" Margin="5,0,0,5">
-                                <TextBlock Grid.Column="0" Text="模型名称" Foreground="#888888"/>
-                                <TextBlock Grid.Column="1" Text="大小" Foreground="#888888"/>
-                                <TextBlock Grid.Column="2" Text="操作" Foreground="#888888"/>
+                                <TextBlock Grid.Column="0" Text="模型名称" Foreground="#888888" />
+                                <TextBlock Grid.Column="1" Text="大小" Foreground="#888888" />
+                                <TextBlock Grid.Column="2" Text="操作" Foreground="#888888" />
                             </Grid>
-                            
+
                             <!-- 表格内容 -->
                             <ScrollViewer Grid.Row="1" MaxHeight="150">
                                 <ItemsControl ItemsSource="{Binding OllamaInfo.AvailableModels}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <Border Background="#2D2D30" 
-                                                    Margin="0,2" 
-                                                    Padding="5" 
+                                            <Border Background="#2D2D30"
+                                                    Margin="0,2"
+                                                    Padding="5"
                                                     CornerRadius="4">
                                                 <Grid ColumnDefinitions="*,100,Auto">
-                                                    <TextBlock Grid.Column="0" 
-                                                             Text="{Binding Name}" 
-                                                             Foreground="White" 
-                                                             VerticalAlignment="Center"/>
-                                                    <TextBlock Grid.Column="1" 
-                                                             Text="{Binding Size, StringFormat={}{0:N1}GB}" 
-                                                             Foreground="White" 
-                                                             VerticalAlignment="Center"/>
+                                                    <TextBlock Grid.Column="0"
+                                                               Text="{Binding Name}"
+                                                               Foreground="White"
+                                                               VerticalAlignment="Center" />
+                                                    <TextBlock Grid.Column="1"
+                                                               Text="{Binding Size, StringFormat={}{0:N1}GB}"
+                                                               Foreground="White"
+                                                               VerticalAlignment="Center" />
                                                     <Button Grid.Column="2"
                                                             Content="安装"
                                                             Classes="accent"
                                                             Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).InstallModelCommand}"
                                                             CommandParameter="{Binding Name}"
-                                                            Margin="0,0,5,0"/>
+                                                            Margin="0,0,5,0" />
                                                 </Grid>
                                             </Border>
                                         </DataTemplate>

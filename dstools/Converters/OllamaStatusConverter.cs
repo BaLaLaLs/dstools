@@ -1,7 +1,6 @@
 using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
-using dstools.Models;
 using dstools.ViewModels;
 
 namespace dstools.Converters
@@ -19,7 +18,7 @@ namespace dstools.Converters
                     _ => "未知"
                 };
             }
-            
+
             if (value is RunningStatus runningStatus)
             {
                 return runningStatus switch
@@ -30,7 +29,7 @@ namespace dstools.Converters
                     _ => "未知"
                 };
             }
-            
+
             return "未知";
         }
 

@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using dstools.Models;
 using LibreHardwareMonitor.Hardware;
 
@@ -22,7 +21,7 @@ public class HardwareService : IHardwareService
     public HardwareInfo GetHardwareInfo()
     {
         var info = new HardwareInfo();
-        
+
         _computer.Open();
         foreach (var hardware in _computer.Hardware)
         {
@@ -38,12 +37,13 @@ public class HardwareService : IHardwareService
                     info.GpuName = hardware.Name;
                     foreach (var sensor in hardware.Sensors)
                     {
-                        if (sensor.SensorType == SensorType.SmallData && 
+                        if (sensor.SensorType == SensorType.SmallData &&
                             sensor.Name.Contains("Memory Total"))
                         {
                             info.GpuMemory = (sensor.Value ?? 0) / 1024;
                         }
                     }
+
                     break;
                 case HardwareType.Memory:
                     double memoryAvailable = 0;
@@ -62,12 +62,14 @@ public class HardwareService : IHardwareService
                             }
                         }
                     }
+
                     info.TotalMemory = Math.Ceiling(memoryAvailable + memoryUsed);
                     break;
             }
         }
+
         _computer.Close();
-        
+
         return info;
     }
 }

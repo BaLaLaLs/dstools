@@ -14,7 +14,7 @@ namespace dstools.Converters
                 // true表示未安装，false表示已安装
                 return isNotInstalled;
             }
-            
+
             return false;
         }
 

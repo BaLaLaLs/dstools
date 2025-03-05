@@ -6,4 +6,4 @@ public class HardwareInfo
     public string GpuName { get; set; } = string.Empty;
     public double GpuMemory { get; set; }
     public double TotalMemory { get; set; }
-} 
+}

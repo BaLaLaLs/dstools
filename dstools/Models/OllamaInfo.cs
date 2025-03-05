@@ -17,4 +17,4 @@ public class AvailableModel
     public string Name { get; set; } = string.Empty;
     public double Size { get; set; }
     public string Description { get; set; } = string.Empty;
-} 
+}

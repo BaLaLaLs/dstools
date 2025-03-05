@@ -6,7 +6,7 @@
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-        
+
         <!-- NativeAOT 配置 -->
         <PublishAot>true</PublishAot>
         <StripSymbols>true</StripSymbols>

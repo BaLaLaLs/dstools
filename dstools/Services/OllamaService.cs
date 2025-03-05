@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using dstools.Models;
@@ -23,7 +23,7 @@ public class OllamaService : IOllamaService
         {
             Timeout = TimeSpan.FromSeconds(5)
         };
-        
+
         _jsonOptions = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
@@ -33,8 +33,8 @@ public class OllamaService : IOllamaService
     public async Task<OllamaInfo> GetOllamaInfo()
     {
         var info = new OllamaInfo();
-        
-        try 
+
+        try
         {
             string ollamaPath = GetOllamaPath();
             if (string.IsNullOrEmpty(ollamaPath))
@@ -68,8 +68,8 @@ public class OllamaService : IOllamaService
             }
 
             const string prefix = "ollama version is ";
-            info.Version = version.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) 
-                ? version[prefix.Length..].Trim() 
+            info.Version = version.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)
+                ? version[prefix.Length..].Trim()
                 : version;
 
             info.InstallStatus = InstallStatus.Installed;
@@ -113,7 +113,8 @@ public class OllamaService : IOllamaService
     {
         try
         {
-            string downloadUrl = "https://ghfast.top/https://github.com/ollama/ollama/releases/latest/download/OllamaSetup.exe";
+            string downloadUrl =
+                "https://ghfast.top/https://github.com/ollama/ollama/releases/latest/download/OllamaSetup.exe";
             string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string setupPath = Path.Combine(appDirectory, "OllamaSetup.exe");
 
@@ -230,7 +231,7 @@ public class OllamaService : IOllamaService
         try
         {
             var response = await _httpClient.GetAsync("http://localhost:11434/api/tags");
-            
+
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync();
@@ -258,7 +259,7 @@ public class OllamaService : IOllamaService
         {
             Debug.WriteLine($"获取模型列表时出错: {ex.Message}");
         }
-        
+
         return models;
     }
 
@@ -298,10 +299,10 @@ public class OllamaService : IOllamaService
             {
                 Content = new StringContent(
                     JsonSerializer.Serialize(
-                        new DeleteModelRequest { Model = modelName }, 
+                        new DeleteModelRequest { Model = modelName },
                         OllamaJsonContext.Default.DeleteModelRequest
-                    ), 
-                    System.Text.Encoding.UTF8, 
+                    ),
+                    Encoding.UTF8,
                     "application/json"
                 )
             };
@@ -334,7 +335,7 @@ public class OllamaService : IOllamaService
             // 检查默认安装路径
             string programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
             string ollamaPath = Path.Combine(programFiles, "ollama", "ollama.exe");
-            
+
             if (File.Exists(ollamaPath))
             {
                 return ollamaPath;
@@ -351,7 +352,7 @@ public class OllamaService : IOllamaService
                 }
             }
         }
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || 
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ||
                  RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {
             // Unix-like 系统通常安装在 /usr/local/bin
@@ -375,4 +376,4 @@ public class OllamaService : IOllamaService
 
         return string.Empty;
     }
-} 
+}

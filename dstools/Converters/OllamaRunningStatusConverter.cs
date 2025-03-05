@@ -15,7 +15,7 @@ namespace dstools.Converters
                 // 如果状态是"运行中"，则返回 false 表示"启动"按钮不可用
                 return status == RunningStatus.Stopped;
             }
-            
+
             // 默认返回 false
             return false;
         }
@@ -25,4 +25,4 @@ namespace dstools.Converters
             throw new NotImplementedException();
         }
     }
-} 
+}
