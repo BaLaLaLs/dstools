@@ -17,6 +17,7 @@
         <converters:OllamaStatusConverter x:Key="OllamaStatusConverter" />
         <converters:OllamaNotInstalledConverter x:Key="OllamaNotInstalledConverter" />
         <converters:OllamaRunningStatusConverter x:Key="OllamaRunningStatusConverter" />
+        <converters:DebugConverter x:Key="DebugConverter" />
     </Window.Resources>
 
     <Design.DataContext>
@@ -139,50 +140,46 @@
                                 IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}">
                         <!-- 已安装模型列表 -->
                         <TextBlock Classes="value" Text="已安装模型：" Margin="0,0,0,5" />
-                        <Grid RowDefinitions="Auto,*" Margin="10,0,0,0">
-                            <!-- 表头 -->
-                            <Grid Grid.Row="0" ColumnDefinitions="*,100,150,Auto" Margin="5,0,0,5">
-                                <TextBlock Grid.Column="0" Text="模型名称" Foreground="#888888" />
-                                <TextBlock Grid.Column="1" Text="大小" Foreground="#888888" />
-                                <TextBlock Grid.Column="2" Text="修改时间" Foreground="#888888" />
-                                <TextBlock Grid.Column="3" Text="操作" Foreground="#888888" />
-                            </Grid>
-
-                            <!-- 表格内容 -->
-                            <ScrollViewer Grid.Row="1" MaxHeight="150">
-                                <ItemsControl ItemsSource="{Binding OllamaInfo.InstalledModels}">
-                                    <ItemsControl.ItemTemplate>
+                        <DataGrid ItemsSource="{Binding OllamaInfo.InstalledModels}" 
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  GridLinesVisibility="All"
+                                  BorderThickness="1"
+                                  BorderBrush="#2D2D30"
+                                  Background="#1E1E1E"
+                                  MaxHeight="150"
+                                  CanUserResizeColumns="True"
+                                  Margin="10,0,0,0"
+                                  Foreground="White">
+                            <DataGrid.Resources>
+                                <SolidColorBrush x:Key="DataGridColumnHeaderBackgroundBrush" Color="#2D2D30"/>
+                                <SolidColorBrush x:Key="DataGridColumnHeaderForegroundBrush" Color="White"/>
+                                <SolidColorBrush x:Key="DataGridRowBackgroundBrush" Color="#1E1E1E"/>
+                                <SolidColorBrush x:Key="DataGridRowForegroundBrush" Color="White"/>
+                            </DataGrid.Resources>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="模型名称" 
+                                                    Binding="{Binding Name}" 
+                                                    Width="*" />
+                                <DataGridTextColumn Header="大小" 
+                                                    Binding="{Binding Size, StringFormat={}{0:N1}GB}" 
+                                                    Width="100" />
+                                <DataGridTextColumn Header="修改时间" 
+                                                    Binding="{Binding ModifiedAt}" 
+                                                    Width="150" />
+                                <DataGridTemplateColumn Header="操作" Width="Auto">
+                                    <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Border Background="#2D2D30"
-                                                    Margin="0,2"
-                                                    Padding="5"
-                                                    CornerRadius="4">
-                                                <Grid ColumnDefinitions="*,100,150,Auto">
-                                                    <TextBlock Grid.Column="0"
-                                                               Text="{Binding Name}"
-                                                               Foreground="White"
-                                                               VerticalAlignment="Center" />
-                                                    <TextBlock Grid.Column="1"
-                                                               Text="{Binding Size, StringFormat={}{0:N1}GB}"
-                                                               Foreground="White"
-                                                               VerticalAlignment="Center" />
-                                                    <TextBlock Grid.Column="2"
-                                                               Text="{Binding ModifiedAt}"
-                                                               Foreground="White"
-                                                               VerticalAlignment="Center" />
-                                                    <Button Grid.Column="3"
-                                                            Content="删除"
-                                                            Classes="accent"
-                                                            Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).DeleteModelCommand}"
-                                                            CommandParameter="{Binding Name}"
-                                                            Margin="10,0,0,0" />
-                                                </Grid>
-                                            </Border>
+                                            <Button Content="删除"
+                                                    Classes="accent"
+                                                    Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).DeleteModelCommand}"
+                                                    CommandParameter="{Binding Name}"
+                                                    Margin="5,0" />
                                         </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </ScrollViewer>
-                        </Grid>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
 
                         <!-- 可安装模型列表 -->
                         <TextBlock Classes="value" Text="可安装模型：" Margin="0,15,0,5" />

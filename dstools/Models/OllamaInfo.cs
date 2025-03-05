@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using dstools.ViewModels;
 
 namespace dstools.Models;
@@ -9,7 +10,7 @@ public class OllamaInfo
     public RunningStatus RunningStatus { get; set; }
     public string Version { get; set; } = string.Empty;
     public string ModelPath { get; set; } = string.Empty;
-    public List<ModelInfo> InstalledModels { get; set; } = new();
+    public ObservableCollection<ModelInfo> InstalledModels { get; set; } = new();
     public List<AvailableModel> AvailableModels { get; set; } = new();
 }
 

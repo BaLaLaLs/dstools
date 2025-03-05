@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
@@ -96,7 +97,7 @@ public class OllamaService : IOllamaService
             // 如果正在运行，获取已安装的模型
             if (info.RunningStatus == RunningStatus.Running)
             {
-                info.InstalledModels = await GetInstalledModels();
+                info.InstalledModels = new ObservableCollection<ModelInfo>(await GetInstalledModels());
                 info.AvailableModels = GetDefaultModels();
             }
         }

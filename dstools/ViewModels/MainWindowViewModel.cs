@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -50,7 +51,6 @@ public partial class MainWindowViewModel : ObservableObject
     {
         _hardwareService = hardwareService;
         _ollamaService = ollamaService;
-
         Initialize();
     }
 
