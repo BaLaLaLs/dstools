@@ -6,8 +6,26 @@
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+        
+        <!-- NativeAOT 配置 -->
+        <PublishAot>true</PublishAot>
+        <StripSymbols>true</StripSymbols>
+        <OptimizationPreference>Size</OptimizationPreference>
+        <InvariantGlobalization>true</InvariantGlobalization>
+        <!-- 移除这个限制，因为Avalonia需要反射 -->
+        <!-- <IlcDisableReflection>true</IlcDisableReflection> -->
+        <IlcFoldIdenticalMethodBodies>true</IlcFoldIdenticalMethodBodies>
+        <!-- 添加以下配置以支持反射 -->
+        <IlcGenerateCompleteTypeMetadata>true</IlcGenerateCompleteTypeMetadata>
+        <IlcDisableUnhandledExceptionExperience>true</IlcDisableUnhandledExceptionExperience>
     </PropertyGroup>
 
+    <!-- 添加RD.XML文件以指定需要保留的类型 -->
+    <ItemGroup>
+        <RdXmlFile Include="rd.xml" />
+    </ItemGroup>
+
+    <!-- 其余部分保持不变 -->
     <ItemGroup>
         <Folder Include="Models\" />
         <AvaloniaResource Include="Assets\**" />

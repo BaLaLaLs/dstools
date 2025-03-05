@@ -62,7 +62,7 @@ public class HardwareService : IHardwareService
                             }
                         }
                     }
-                    info.TotalMemory = memoryAvailable + memoryUsed;
+                    info.TotalMemory = Math.Ceiling(memoryAvailable + memoryUsed);
                     break;
             }
         }
