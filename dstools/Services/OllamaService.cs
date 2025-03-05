@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Text.Json;
@@ -223,9 +224,9 @@ public class OllamaService : IOllamaService
         }
     }
 
-    public async Task<List<string>> GetInstalledModels()
+    public async Task<List<ModelInfo>> GetInstalledModels()
     {
-        var models = new List<string>();
+        var models = new List<ModelInfo>();
         try
         {
             var response = await _httpClient.GetAsync("http://localhost:11434/api/tags");
@@ -235,23 +236,10 @@ public class OllamaService : IOllamaService
                 var content = await response.Content.ReadAsStringAsync();
                 if (!string.IsNullOrEmpty(content))
                 {
-                    using var document = JsonDocument.Parse(content);
-                    var root = document.RootElement;
-                    
-                    if (root.TryGetProperty("models", out var modelsElement) && 
-                        modelsElement.ValueKind == JsonValueKind.Array)
+                    var tagsResponse = JsonSerializer.Deserialize(content, OllamaJsonContext.Default.TagsResponse);
+                    if (tagsResponse?.Models != null)
                     {
-                        foreach (var model in modelsElement.EnumerateArray())
-                        {
-                            if (model.TryGetProperty("name", out var nameElement))
-                            {
-                                var name = nameElement.GetString();
-                                if (!string.IsNullOrEmpty(name))
-                                {
-                                    models.Add(name);
-                                }
-                            }
-                        }
+                        models = tagsResponse.Models;
                     }
                 }
             }

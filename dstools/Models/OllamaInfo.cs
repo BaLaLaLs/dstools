@@ -8,5 +8,5 @@ public class OllamaInfo
     public InstallStatus InstallStatus { get; set; }
     public RunningStatus RunningStatus { get; set; }
     public string Version { get; set; } = string.Empty;
-    public List<string> InstalledModels { get; set; } = new();
+    public List<ModelInfo> InstalledModels { get; set; } = new();
 } 
