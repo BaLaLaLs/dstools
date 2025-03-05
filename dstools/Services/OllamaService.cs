@@ -240,14 +240,14 @@ public class OllamaService : IOllamaService
                     if (tagsResponse?.Models != null)
                     {
                         models = tagsResponse.Models;
-                        // 转换文件大小为GB
+                        // 转换时间格式
                         foreach (var model in models)
                         {
                             model.Size /= 1024 * 1024 * 1024; // 转换为GB
                             // 转换时间格式
                             if (DateTime.TryParse(model.ModifiedAt, out var dateTime))
                             {
-                                model.ModifiedAt = dateTime.ToString("yyyy-MM-dd HH:mm:ss");
+                                model.ModifiedAt = dateTime.ToString("yyyy-MM-dd HH:mm");
                             }
                         }
                     }
@@ -260,6 +260,71 @@ public class OllamaService : IOllamaService
         }
         
         return models;
+    }
+
+    public async Task<bool> InstallModel(string modelName)
+    {
+        try
+        {
+            var process = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = GetOllamaPath(),
+                    Arguments = $"pull {modelName}",
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true
+                }
+            };
+
+            process.Start();
+            await process.WaitForExitAsync();
+            return process.ExitCode == 0;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"安装模型时出错: {ex.Message}");
+            return false;
+        }
+    }
+
+    public async Task<bool> DeleteModel(string modelName)
+    {
+        try
+        {
+            var request = new HttpRequestMessage(HttpMethod.Delete, "http://localhost:11434/api/delete")
+            {
+                Content = new StringContent(
+                    JsonSerializer.Serialize(
+                        new DeleteModelRequest { Model = modelName }, 
+                        OllamaJsonContext.Default.DeleteModelRequest
+                    ), 
+                    System.Text.Encoding.UTF8, 
+                    "application/json"
+                )
+            };
+
+            var response = await _httpClient.SendAsync(request);
+            return response.IsSuccessStatusCode;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"删除模型时出错: {ex.Message}");
+            return false;
+        }
+    }
+
+    private List<AvailableModel> GetDefaultModels()
+    {
+        return new List<AvailableModel>
+        {
+            new() { Name = "deepseek-coder:6.7b", Size = 4.2, Description = "DeepSeek Coder 6.7B 基础版" },
+            new() { Name = "deepseek-coder:33b", Size = 19.5, Description = "DeepSeek Coder 33B 基础版" },
+            new() { Name = "deepseek-coder:6.7b-instruct", Size = 4.2, Description = "DeepSeek Coder 6.7B 对话版" },
+            new() { Name = "deepseek-coder:33b-instruct", Size = 19.5, Description = "DeepSeek Coder 33B 对话版" }
+        };
     }
 
     private string GetOllamaPath()

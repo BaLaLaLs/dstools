@@ -123,11 +123,46 @@ public partial class MainWindowViewModel : ObservableObject
         
         OllamaInfo = await _ollamaService.GetOllamaInfo();
     }
+
+    [RelayCommand]
+    private async Task InstallModel(string modelName)
+    {
+        HasError = false;
+        ErrorMessage = string.Empty;
+        
+        var success = await _ollamaService.InstallModel(modelName);
+        if (!success)
+        {
+            HasError = true;
+            ErrorMessage = "模型安装失败";
+        }
+        
+        // 刷新模型列表
+        OllamaInfo = await _ollamaService.GetOllamaInfo();
+    }
+
+    [RelayCommand]
+    private async Task DeleteModel(string modelName)
+    {
+        HasError = false;
+        ErrorMessage = string.Empty;
+        
+        var success = await _ollamaService.DeleteModel(modelName);
+        if (!success)
+        {
+            HasError = true;
+            ErrorMessage = "模型删除失败";
+        }
+        
+        // 刷新模型列表
+        OllamaInfo = await _ollamaService.GetOllamaInfo();
+    }
 }
 
 [JsonSerializable(typeof(TagsResponse))]
 [JsonSerializable(typeof(List<ModelInfo>))]
 [JsonSerializable(typeof(ModelInfo))]
+[JsonSerializable(typeof(DeleteModelRequest))]
 partial class OllamaJsonContext : JsonSerializerContext
 {
 }
@@ -155,4 +190,10 @@ public class ModelInfo
     [JsonPropertyName("digest")]
     public string Digest { get; set; } = string.Empty;
 
+}
+
+public class DeleteModelRequest
+{
+    [JsonPropertyName("model")]
+    public string Model { get; set; } = string.Empty;
 }
