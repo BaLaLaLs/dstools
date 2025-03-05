@@ -14,6 +14,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using dstools.Models;
 using dstools.Services;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
 
 namespace dstools.ViewModels;
 
@@ -144,6 +146,21 @@ public partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private async Task DeleteModel(string modelName)
     {
+        // 显示确认对话框
+        var messageBoxStandardWindow = MessageBoxManager
+            .GetMessageBoxStandard(
+                "确认删除",
+                $"确定要删除模型 {modelName} 吗？",
+                ButtonEnum.YesNo,
+                Icon.Question);
+
+        var result = await messageBoxStandardWindow.ShowAsync();
+        
+        if (result != ButtonResult.Yes)
+        {
+            return;
+        }
+
         HasError = false;
         ErrorMessage = string.Empty;
         
