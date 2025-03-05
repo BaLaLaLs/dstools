@@ -26,6 +26,7 @@ namespace dstools.Converters
                 {
                     RunningStatus.NotRunning => "未运行",
                     RunningStatus.Running => "运行中",
+                    RunningStatus.Stopped => "未运行",
                     _ => "未知"
                 };
             }
