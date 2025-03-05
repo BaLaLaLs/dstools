@@ -97,6 +97,7 @@ public class OllamaService : IOllamaService
             if (info.RunningStatus == RunningStatus.Running)
             {
                 info.InstalledModels = await GetInstalledModels();
+                info.AvailableModels = GetDefaultModels();
             }
         }
         catch (Exception ex)
@@ -321,10 +322,25 @@ public class OllamaService : IOllamaService
     {
         return new List<AvailableModel>
         {
-            new() { Name = "deepseek-coder:6.7b", Size = 4.2, Description = "DeepSeek Coder 6.7B 基础版" },
-            new() { Name = "deepseek-coder:33b", Size = 19.5, Description = "DeepSeek Coder 33B 基础版" },
-            new() { Name = "deepseek-coder:6.7b-instruct", Size = 4.2, Description = "DeepSeek Coder 6.7B 对话版" },
-            new() { Name = "deepseek-coder:33b-instruct", Size = 19.5, Description = "DeepSeek Coder 33B 对话版" }
+            new()
+            {
+                Name = "deepseek-coder:1.5b", Size = 4.2, Description = "DeepSeek Coder 6.7B 基础版",
+                Url = ""
+            },
+            new()
+            {
+                Name = "deepseek-coder:6.7b", Size = 4.2, Description = "DeepSeek Coder 6.7B 基础版",
+                Url = ""
+            },
+            new() { Name = "deepseek-coder:33b", Size = 19.5, Description = "DeepSeek Coder 33B 基础版", Url = "" },
+            new()
+            {
+                Name = "deepseek-coder:6.7b-instruct", Size = 4.2, Description = "DeepSeek Coder 6.7B 对话版", Url = ""
+            },
+            new()
+            {
+                Name = "deepseek-coder:33b-instruct", Size = 19.5, Description = "DeepSeek Coder 33B 对话版", Url = ""
+            }
         };
     }
 

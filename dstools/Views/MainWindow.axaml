@@ -11,7 +11,7 @@
         Icon="/Assets/avalonia-logo.ico"
         Title="DeepSeek部署工具"
         Width="500"
-        Height="400">
+        Height="500">
 
     <Window.Resources>
         <converters:OllamaStatusConverter x:Key="OllamaStatusConverter" />
@@ -105,10 +105,17 @@
                                            FontSize="12"
                                            IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}" />
                             </StackPanel>
-                            <StackPanel Orientation="Horizontal"
-                                        IsVisible="{Binding !OllamaInfo.InstallStatus, Converter={StaticResource OllamaNotInstalledConverter}}">
+                            <StackPanel Orientation="Horizontal">
                                 <TextBlock Classes="value" Text="版本：" />
                                 <TextBlock Classes="value" Text="{Binding OllamaInfo.Version}" />
+                                <!-- 添加模型文件夹路径显示 -->
+                                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                    <TextBlock Classes="value" Text="模型路径：" />
+                                    <TextBlock Classes="value" Text="{Binding OllamaInfo.ModelPath}" Width="200" 
+                                               TextWrapping="Wrap" TextTrimming="CharacterEllipsis" />
+                                    <Button Content="更改" Command="{Binding SelectModelPathCommand}" 
+                                            Classes="accent" Margin="5,0,0,0" Padding="5,2" />
+                                </StackPanel>
                             </StackPanel>
                         </StackPanel>
                     </Grid>

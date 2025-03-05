@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using dstools.Models;
@@ -159,6 +162,33 @@ public partial class MainWindowViewModel : ObservableObject
 
         // 刷新模型列表
         OllamaInfo = await _ollamaService.GetOllamaInfo();
+    }
+    [RelayCommand]
+    private async Task SelectModelPath()
+    {
+        try
+        {
+            // 使用 Avalonia 的文件夹选择对话框
+            var mainWindow = App.Current?.ApplicationLifetime is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop
+                ? desktop.MainWindow
+                : null;
+            if (mainWindow == null)
+            {
+                HasError = true;
+                ErrorMessage = "无法获取主窗口";
+                return;
+            }
+            var storage = mainWindow.StorageProvider;
+            FolderPickerOpenOptions options = new FolderPickerOpenOptions();
+            await storage.OpenFolderPickerAsync(options);
+            
+        }
+        catch (Exception ex)
+        {
+            HasError = true;
+            ErrorMessage = $"选择路径失败：{ex.Message}";
+            Debug.WriteLine($"选择模型路径时发生错误: {ex.Message}");
+        }
     }
 }
 
