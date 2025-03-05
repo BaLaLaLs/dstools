@@ -240,6 +240,16 @@ public class OllamaService : IOllamaService
                     if (tagsResponse?.Models != null)
                     {
                         models = tagsResponse.Models;
+                        // 转换文件大小为GB
+                        foreach (var model in models)
+                        {
+                            model.Size /= 1024 * 1024 * 1024; // 转换为GB
+                            // 转换时间格式
+                            if (DateTime.TryParse(model.ModifiedAt, out var dateTime))
+                            {
+                                model.ModifiedAt = dateTime.ToString("yyyy-MM-dd HH:mm:ss");
+                            }
+                        }
                     }
                 }
             }

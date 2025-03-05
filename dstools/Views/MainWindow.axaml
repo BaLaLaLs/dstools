@@ -110,30 +110,43 @@
                     </StackPanel>
                     <StackPanel Margin="0,10,0,0" IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}">
                         <TextBlock Classes="value" Text="已安装模型：" Margin="0,0,0,5"/>
-                        <ListBox ItemsSource="{Binding OllamaInfo.InstalledModels}" 
-                                MaxHeight="150" 
-                                Background="Transparent" 
-                                BorderThickness="0"
-                                Margin="10,0,0,0">
-                            <ListBox.Styles>
-                                <Style Selector="ListBoxItem">
-                                    <Setter Property="Padding" Value="5"/>
-                                    <Setter Property="Margin" Value="0,2"/>
-                                    <Setter Property="CornerRadius" Value="4"/>
-                                    <Setter Property="Background" Value="#2D2D30"/>
-                                </Style>
-                                <Style Selector="ListBoxItem:pointerover">
-                                    <Setter Property="Background" Value="#3E3E42"/>
-                                </Style>
-                            </ListBox.Styles>
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding}" 
-                                             Foreground="White"
-                                             VerticalAlignment="Center"/>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
+                        <Grid RowDefinitions="Auto,*" Margin="10,0,0,0">
+                            <!-- 表头 -->
+                            <Grid Grid.Row="0" ColumnDefinitions="*,100,150" Margin="5,0,0,5">
+                                <TextBlock Grid.Column="0" Text="模型名称" Foreground="#888888"/>
+                                <TextBlock Grid.Column="1" Text="大小" Foreground="#888888"/>
+                                <TextBlock Grid.Column="2" Text="修改时间" Foreground="#888888"/>
+                            </Grid>
+                            
+                            <!-- 表格内容 -->
+                            <ScrollViewer Grid.Row="1" MaxHeight="150">
+                                <ItemsControl ItemsSource="{Binding OllamaInfo.InstalledModels}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="#2D2D30" 
+                                                    Margin="0,2" 
+                                                    Padding="5" 
+                                                    CornerRadius="4">
+                                                <Grid ColumnDefinitions="*,100,150">
+                                                    <TextBlock Grid.Column="0" 
+                                                             Text="{Binding Name}" 
+                                                             Foreground="White" 
+                                                             VerticalAlignment="Center"/>
+                                                    <TextBlock Grid.Column="1" 
+                                                             Text="{Binding Size, StringFormat={}{0:N1}GB}" 
+                                                             Foreground="White" 
+                                                             VerticalAlignment="Center"/>
+                                                    <TextBlock Grid.Column="2" 
+                                                             Text="{Binding ModifiedAt}" 
+                                                             Foreground="White"
+                                                             VerticalAlignment="Center"/>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </Grid>
                     </StackPanel>
                 </StackPanel>
             </Border>
