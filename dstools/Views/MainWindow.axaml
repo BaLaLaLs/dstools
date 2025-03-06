@@ -11,7 +11,7 @@
         Icon="/Assets/avalonia-logo.ico"
         Title="DeepSeek部署工具"
         Width="500"
-        Height="700">
+        Height="900">
 
     <Window.Resources>
         <converters:OllamaStatusConverter x:Key="OllamaStatusConverter" />
@@ -250,6 +250,52 @@
                             </DataGrid.Columns>
                         </DataGrid>
                     </StackPanel>
+                </StackPanel>
+            </Border>
+            
+            <!-- 大语言模型应用推荐 -->
+            <Border Classes="item">
+                <StackPanel>
+                    <Grid ColumnDefinitions="Auto,Auto,*">
+                        <lucideAvalonia:Lucide Grid.Column="0" Icon="Sparkles" StrokeBrush="White" StrokeThickness="1.5"
+                                           Width="22" Height="22" />
+                        <TextBlock Grid.Column="1" Classes="title" Text="推荐工具" />
+                        <TextBlock Grid.Column="2" Classes="value" Text="其他优秀的大语言模型应用" />
+                    </Grid>
+                    
+                    <!-- Cherry Studio -->
+                    <Border Margin="10,10,0,0" Padding="10" Background="#252528" CornerRadius="4">
+                        <Grid ColumnDefinitions="Auto,*">
+                            <Border Grid.Column="0" Background="#FF4081" CornerRadius="4" Width="32" Height="32" Margin="0,0,10,0">
+                                <TextBlock Text="C" FontWeight="Bold" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
+                            </Border>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="Cherry Studio" FontWeight="Bold" Foreground="White" />
+                                <TextBlock Text="功能丰富的AI助手，支持多种大语言模型，提供对话、绘图等功能" 
+                                           Foreground="#CCCCCC" TextWrapping="Wrap" Margin="0,5,0,0" FontSize="12" />
+                                <Button Content="官网" Classes="link" Foreground="#4D94FF" Margin="0,5,0,0" 
+                                        Padding="0" Background="Transparent" BorderThickness="0"
+                                        Command="{Binding OpenBrowserCommand}"
+                                        CommandParameter="https://docs.cherry-ai.com/" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                    
+                    <!-- LM Studio -->
+                    <Border Margin="10,10,0,0" Padding="10" Background="#252528" CornerRadius="4">
+                        <Grid ColumnDefinitions="Auto,*">
+                            <Border Grid.Column="0" Background="#4CAF50" CornerRadius="4" Width="32" Height="32" Margin="0,0,10,0">
+                                <TextBlock Text="L" FontWeight="Bold" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
+                            </Border>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="LM Studio" FontWeight="Bold" Foreground="White" />
+                                <TextBlock Text="本地运行大语言模型的桌面应用，支持多种开源模型，提供简洁的用户界面" 
+                                           Foreground="#CCCCCC" TextWrapping="Wrap" Margin="0,5,0,0" FontSize="12" />
+                                <Button Content="官网" Classes="link" Foreground="#4D94FF" Margin="0,5,0,0" 
+                                        Padding="0" Background="Transparent" BorderThickness="0" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
                 </StackPanel>
             </Border>
             </StackPanel>

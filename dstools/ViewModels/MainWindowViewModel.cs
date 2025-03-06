@@ -211,4 +211,24 @@ public partial class MainWindowViewModel : ObservableObject
             Debug.WriteLine($"选择模型路径时发生错误: {ex.Message}");
         }
     }
+    [RelayCommand]
+    private void OpenBrowser(string url)
+    {
+        try
+        {
+            // 使用系统默认浏览器打开URL
+            var psi = new ProcessStartInfo
+            {
+                FileName = url,
+                UseShellExecute = true
+            };
+            Process.Start(psi);
+        }
+        catch (Exception ex)
+        {
+            HasError = true;
+            ErrorMessage = $"打开浏览器失败：{ex.Message}";
+            Debug.WriteLine($"打开浏览器时发生错误: {ex.Message}");
+        }
+    }
 }
