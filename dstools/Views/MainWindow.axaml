@@ -58,7 +58,8 @@
     </Window.Styles>
 
     <Border Background="#1E1E1E" Padding="10">
-        <StackPanel>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel>
             <!-- CPU -->
             <Border Classes="item">
                 <Grid ColumnDefinitions="Auto, Auto, *">
@@ -251,6 +252,7 @@
                     </StackPanel>
                 </StackPanel>
             </Border>
-        </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
     </Border>
 </Window>
