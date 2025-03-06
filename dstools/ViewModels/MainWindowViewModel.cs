@@ -118,7 +118,7 @@ public partial class MainWindowViewModel : ObservableObject
         HasError = false;
         ErrorMessage = string.Empty;
 
-        var success = await _ollamaService.InstallModel(modelName);
+        var success = await _ollamaService.PullModel(modelName);
         if (!success)
         {
             HasError = true;
@@ -211,35 +211,4 @@ public partial class MainWindowViewModel : ObservableObject
             Debug.WriteLine($"选择模型路径时发生错误: {ex.Message}");
         }
     }
-}
-
-[JsonSerializable(typeof(TagsResponse))]
-[JsonSerializable(typeof(List<ModelInfo>))]
-[JsonSerializable(typeof(ModelInfo))]
-[JsonSerializable(typeof(DeleteModelRequest))]
-partial class OllamaJsonContext : JsonSerializerContext
-{
-}
-
-public class TagsResponse
-{
-    [JsonPropertyName("models")] public List<ModelInfo> Models { get; set; } = new();
-}
-
-public class ModelInfo
-{
-    [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
-
-    [JsonPropertyName("model")] public string Model { get; set; } = string.Empty;
-
-    [JsonPropertyName("modified_at")] public string ModifiedAt { get; set; } = string.Empty;
-
-    [JsonPropertyName("size")] public long Size { get; set; }
-
-    [JsonPropertyName("digest")] public string Digest { get; set; } = string.Empty;
-}
-
-public class DeleteModelRequest
-{
-    [JsonPropertyName("model")] public string Model { get; set; } = string.Empty;
 }

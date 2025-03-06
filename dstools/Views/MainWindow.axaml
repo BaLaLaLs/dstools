@@ -11,7 +11,7 @@
         Icon="/Assets/avalonia-logo.ico"
         Title="DeepSeek部署工具"
         Width="500"
-        Height="500">
+        Height="700">
 
     <Window.Resources>
         <converters:OllamaStatusConverter x:Key="OllamaStatusConverter" />
@@ -241,7 +241,7 @@
                                                     BorderThickness="0"
                                                     Foreground="#4D94FF"
                                                     Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).InstallModelCommand}"
-                                                    CommandParameter="{Binding Name}"
+                                                    CommandParameter="{Binding Url}"
                                                     Margin="5,0" />
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>

@@ -265,35 +265,7 @@ public class OllamaService : IOllamaService
 
         return models;
     }
-
-    public async Task<bool> InstallModel(string modelName)
-    {
-        try
-        {
-            var process = new Process
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = GetOllamaPath(),
-                    Arguments = $"pull {modelName}",
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true
-                }
-            };
-
-            process.Start();
-            await process.WaitForExitAsync();
-            return process.ExitCode == 0;
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"安装模型时出错: {ex.Message}");
-            return false;
-        }
-    }
-
+    
     public async Task<bool> DeleteModel(string modelName)
     {
         try
@@ -331,10 +303,10 @@ public class OllamaService : IOllamaService
             },
             new()
             {
-                Name = "deepseek-coder:6.7b", Size = 4.2, Description = "DeepSeek Coder 6.7B 基础版",
-                Url = ""
+                Name = "DeepSeek-R1-Distill-Qwen-7B-GGUF", Size = 4.68, Description = "DeepSeek-R1-Distill-Qwen-7B-GGUF",
+                Url = "modelscope.cn/unsloth/DeepSeek-R1-Distill-Qwen-7B-GGUF:DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf"
             },
-            new() { Name = "deepseek-coder:33b", Size = 19.5, Description = "DeepSeek Coder 33B 基础版", Url = "" },
+            new() { Name = "deepseek-r1:14b", Size = 19.5, Description = "deepseek-r1:14b版", Url = "modelscope.cn/unsloth/DeepSeek-R1-Distill-Qwen-14B-GGUF:Q4_K_M" },
             new()
             {
                 Name = "deepseek-coder:6.7b-instruct", Size = 4.2, Description = "DeepSeek Coder 6.7B 对话版", Url = ""
@@ -418,9 +390,63 @@ public class OllamaService : IOllamaService
         }
     }
     // 下载模型
-    public void DownloadModel()
+    public async Task<bool> PullModel(String modelName)
     {
-        
-        
+        try
+        {
+            // 创建请求内容
+            var requestContent = new StringContent(
+                JsonSerializer.Serialize(
+                    new PullModelRequest { Model = modelName },
+                    OllamaJsonContext.Default.PullModelRequest
+                ),
+                Encoding.UTF8,
+                "application/json"
+            );
+
+            // 发送请求到 Ollama API
+            var response = await _httpClient.PostAsync("http://localhost:11434/api/pull", requestContent);
+            
+            // 检查响应状态
+            if (!response.IsSuccessStatusCode)
+            {
+                Debug.WriteLine($"拉取模型失败: {response.StatusCode}");
+                return false;
+            }
+
+            // 读取响应流
+            using var streamReader = new StreamReader(await response.Content.ReadAsStreamAsync());
+            string line;
+            
+            // 处理流式响应
+            while ((line = await streamReader.ReadLineAsync()) != null)
+            {
+                if (string.IsNullOrEmpty(line)) continue;
+                
+                // 解析 JSON 响应
+                var pullResponse = JsonSerializer.Deserialize(line, OllamaJsonContext.Default.PullModelResponse);
+                if (pullResponse == null) continue;
+                
+                // 检查是否有错误
+                if (!string.IsNullOrEmpty(pullResponse.Error))
+                {
+                    Debug.WriteLine($"拉取模型时出错: {pullResponse.Error}");
+                    return false;
+                }
+                
+                // 检查是否完成
+                if (pullResponse.Status == "success")
+                {
+                    return true;
+                }
+            }
+            
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"拉取模型时出错: {ex.Message}");
+            return false;
+        }
     }
 }

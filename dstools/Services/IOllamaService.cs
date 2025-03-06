@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using dstools.Models;
 using dstools.ViewModels;
@@ -13,8 +14,7 @@ public interface IOllamaService
     Task<bool> StartOllama();
     Task<bool> StopOllama();
     Task<List<ModelInfo>> GetInstalledModels();
-    Task<bool> InstallModel(string modelName);
     Task<bool> DeleteModel(string modelName);
     string GetModelInstallPath();
-    void DownloadModel();
+    Task<bool> PullModel(String modelName);
 }

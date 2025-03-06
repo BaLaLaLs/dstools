@@ -1,0 +1,21 @@
+<Directives xmlns="http://schemas.microsoft.com/netfx/2013/01/metadata">
+    <Application>
+        <!-- Avalonia 核心类型 -->
+        <Assembly Name="Avalonia" Dynamic="Required All" />
+        <Assembly Name="Avalonia.Base" Dynamic="Required All" />
+        <Assembly Name="Avalonia.Controls" Dynamic="Required All" />
+        <Assembly Name="Avalonia.Desktop" Dynamic="Required All" />
+        <Assembly Name="Avalonia.Themes.Fluent" Dynamic="Required All" />
+
+        <!-- MVVM 相关 -->
+        <Assembly Name="CommunityToolkit.Mvvm" Dynamic="Required All" />
+
+        <!-- 应用程序程序集 -->
+        <Assembly Name="dstools" Dynamic="Required All" />
+
+        <!-- 其他依赖库 -->
+        <Assembly Name="LibreHardwareMonitorLib" Dynamic="Required All" />
+        <Assembly Name="LucideAvalonia" Dynamic="Required All" />
+        <Assembly Name="Avalonia.Svg.Skia" Dynamic="Required All" />
+    </Application>
+</Directives>
