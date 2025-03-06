@@ -16,4 +16,5 @@ public interface IOllamaService
     Task<bool> InstallModel(string modelName);
     Task<bool> DeleteModel(string modelName);
     string GetModelInstallPath();
+    void DownloadModel();
 }

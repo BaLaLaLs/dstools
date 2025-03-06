@@ -417,4 +417,10 @@ public class OllamaService : IOllamaService
             return string.Empty;
         }
     }
+    // 下载模型
+    public void DownloadModel()
+    {
+        
+        
+    }
 }

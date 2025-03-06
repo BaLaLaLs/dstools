@@ -25,6 +25,15 @@
     </Design.DataContext>
 
     <Window.Styles>
+            <Style Selector="Button.link">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="5,0" />
+        </Style>
+        <Style Selector="Button.link:pointerover">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Opacity" Value="0.7" />
+        </Style>
         <Style Selector="Border.item">
             <Setter Property="Padding" Value="10" />
             <Setter Property="Margin" Value="5" />
@@ -195,45 +204,50 @@
 
                         <!-- 可安装模型列表 -->
                         <TextBlock Classes="value" Text="可安装模型：" Margin="0,15,0,5" />
-                        <Grid RowDefinitions="Auto,*" Margin="10,0,0,0">
-                            <!-- 表头 -->
-                            <Grid Grid.Row="0" ColumnDefinitions="*,100,Auto" Margin="5,0,0,5">
-                                <TextBlock Grid.Column="0" Text="模型名称" Foreground="#888888" />
-                                <TextBlock Grid.Column="1" Text="大小" Foreground="#888888" />
-                                <TextBlock Grid.Column="2" Text="操作" Foreground="#888888" />
-                            </Grid>
-
-                            <!-- 表格内容 -->
-                            <ScrollViewer Grid.Row="1" MaxHeight="150">
-                                <ItemsControl ItemsSource="{Binding OllamaInfo.AvailableModels}">
-                                    <ItemsControl.ItemTemplate>
+                        <DataGrid ItemsSource="{Binding OllamaInfo.AvailableModels}" 
+                                  MinHeight="100"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  GridLinesVisibility="All"
+                                  BorderThickness="1"
+                                  BorderBrush="#2D2D30"
+                                  Background="#1E1E1E"
+                                  MaxHeight="150"
+                                  CanUserResizeColumns="True"
+                                  Margin="10,0,0,0"
+                                  Foreground="White">
+                            <DataGrid.Resources>
+                                <SolidColorBrush x:Key="DataGridColumnHeaderBackgroundBrush" Color="#2D2D30"/>
+                                <SolidColorBrush x:Key="DataGridColumnHeaderForegroundBrush" Color="White"/>
+                                <SolidColorBrush x:Key="DataGridRowBackgroundBrush" Color="#1E1E1E"/>
+                                <SolidColorBrush x:Key="DataGridRowForegroundBrush" Color="White"/>
+                            </DataGrid.Resources>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="模型名称" 
+                                                    Binding="{Binding Name}" 
+                                                    Width="*" />
+                                <DataGridTextColumn Header="大小" 
+                                                    Binding="{Binding Size, StringFormat={}{0:N1}GB}" 
+                                                    Width="100" />
+                                <DataGridTextColumn Header="描述" 
+                                                    Binding="{Binding Description}" 
+                                                    Width="150" />
+                                <DataGridTemplateColumn Header="操作" Width="Auto">
+                                    <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Border Background="#2D2D30"
-                                                    Margin="0,2"
-                                                    Padding="5"
-                                                    CornerRadius="4">
-                                                <Grid ColumnDefinitions="*,100,Auto">
-                                                    <TextBlock Grid.Column="0"
-                                                               Text="{Binding Name}"
-                                                               Foreground="White"
-                                                               VerticalAlignment="Center" />
-                                                    <TextBlock Grid.Column="1"
-                                                               Text="{Binding Size, StringFormat={}{0:N1}GB}"
-                                                               Foreground="White"
-                                                               VerticalAlignment="Center" />
-                                                    <Button Grid.Column="2"
-                                                            Content="安装"
-                                                            Classes="accent"
-                                                            Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).InstallModelCommand}"
-                                                            CommandParameter="{Binding Name}"
-                                                            Margin="0,0,5,0" />
-                                                </Grid>
-                                            </Border>
+                                            <Button Content="安装"
+                                             Classes="link"
+                                                    Background="Transparent"
+                                                    BorderThickness="0"
+                                                    Foreground="#4D94FF"
+                                                    Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).InstallModelCommand}"
+                                                    CommandParameter="{Binding Name}"
+                                                    Margin="5,0" />
                                         </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </ScrollViewer>
-                        </Grid>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
                     </StackPanel>
                 </StackPanel>
             </Border>
