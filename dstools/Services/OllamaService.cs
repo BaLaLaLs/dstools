@@ -394,53 +394,41 @@ public class OllamaService : IOllamaService
     {
         try
         {
-            // 创建请求内容
-            var requestContent = new StringContent(
-                JsonSerializer.Serialize(
-                    new PullModelRequest { Model = modelName },
-                    OllamaJsonContext.Default.PullModelRequest
-                ),
-                Encoding.UTF8,
-                "application/json"
-            );
-
-            // 发送请求到 Ollama API
-            var response = await _httpClient.PostAsync("http://localhost:11434/api/pull", requestContent);
-            
-            // 检查响应状态
-            if (!response.IsSuccessStatusCode)
+            // 获取ollama路径
+            string ollamaPath = GetOllamaPath();
+            if (string.IsNullOrEmpty(ollamaPath))
             {
-                Debug.WriteLine($"拉取模型失败: {response.StatusCode}");
+                Debug.WriteLine("无法找到ollama可执行文件");
                 return false;
             }
 
-            // 读取响应流
-            using var streamReader = new StreamReader(await response.Content.ReadAsStreamAsync());
-            string line;
-            
-            // 处理流式响应
-            while ((line = await streamReader.ReadLineAsync()) != null)
+            // 创建PowerShell进程来执行ollama pull命令
+            var process = new Process
             {
-                if (string.IsNullOrEmpty(line)) continue;
-                
-                // 解析 JSON 响应
-                var pullResponse = JsonSerializer.Deserialize(line, OllamaJsonContext.Default.PullModelResponse);
-                if (pullResponse == null) continue;
-                
-                // 检查是否有错误
-                if (!string.IsNullOrEmpty(pullResponse.Error))
+                StartInfo = new ProcessStartInfo
                 {
-                    Debug.WriteLine($"拉取模型时出错: {pullResponse.Error}");
-                    return false;
+                    FileName = "powershell",
+                    Arguments = $"-Command \"& '{ollamaPath}' pull '{modelName}'\"",
+                    RedirectStandardOutput = false,
+                    RedirectStandardError = false,
+                    UseShellExecute = false,
+                    CreateNoWindow = false
                 }
-                
-                // 检查是否完成
-                if (pullResponse.Status == "success")
-                {
-                    return true;
-                }
-            }
+            };
+
+            // 启动进程
+            process.Start();
+
+            // 等待进程完成
+            await Task.Run(() => process.WaitForExit());
             
+            // 检查退出代码
+            if (process.ExitCode != 0)
+            {
+                Debug.WriteLine($"拉取模型失败，退出代码: {process.ExitCode}");
+                return false;
+            }
+
             return true;
         }
         catch (Exception ex)
