@@ -94,6 +94,7 @@
                         </Border>
                         <TextBlock Grid.Column="1" Classes="title" Text="Ollama" />
                         <StackPanel Grid.Column="2" Orientation="Vertical">
+                            <!-- 状态信息行 -->
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Classes="value" Text="安装状态：" />
                                 <TextBlock Classes="value"
@@ -106,20 +107,28 @@
                                            FontSize="12"
                                            IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}" />
                             </StackPanel>
-                            <StackPanel Orientation="Horizontal">
+                            
+                            <!-- 版本信息行 -->
+                            <StackPanel Orientation="Horizontal" Margin="0,5,0,0"
+                                        IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}">
                                 <TextBlock Classes="value" Text="版本：" />
                                 <TextBlock Classes="value" Text="{Binding OllamaInfo.Version}" />
-                                <!-- 添加模型文件夹路径显示 -->
-                                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                                    <TextBlock Classes="value" Text="模型路径：" />
-                                    <TextBlock Classes="value" Text="{Binding OllamaInfo.ModelPath}" Width="200" 
-                                               TextWrapping="Wrap" TextTrimming="CharacterEllipsis" />
-                                    <Button Content="更改" Command="{Binding SelectModelPathCommand}" 
-                                            Classes="accent" Margin="5,0,0,0" Padding="5,2" />
-                                </StackPanel>
                             </StackPanel>
+                            
+                            <!-- 模型路径行 -->
+                            <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,5,0,0"
+                                  IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}">
+                                <TextBlock Grid.Column="0" Classes="value" Text="模型路径：" />
+                                <TextBlock Grid.Column="1" Classes="value" Text="{Binding OllamaInfo.ModelPath}" 
+                                           TextWrapping="Wrap" TextTrimming="CharacterEllipsis" 
+                                           VerticalAlignment="Center" />
+                                <Button Grid.Column="2" Content="更改" Command="{Binding SelectModelPathCommand}" 
+                                        Classes="accent" Padding="5,2" />
+                            </Grid>
                         </StackPanel>
                     </Grid>
+                    
+                    <!-- 操作按钮区域 -->
                     <StackPanel Orientation="Horizontal" Margin="0,10,0,0" HorizontalAlignment="Right">
                         <Button Classes="accent" Content="安装" Command="{Binding InstallOllamaCommand}"
                                 Margin="0,0,10,0"
@@ -136,11 +145,14 @@
                                 IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}"
                                 IsEnabled="{Binding OllamaInfo.RunningStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaRunningStatusConverter}}" />
                     </StackPanel>
+                    
+                    <!-- 模型列表区域 -->
                     <StackPanel Margin="0,10,0,0"
                                 IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}">
                         <!-- 已安装模型列表 -->
                         <TextBlock Classes="value" Text="已安装模型：" Margin="0,0,0,5" />
                         <DataGrid ItemsSource="{Binding OllamaInfo.InstalledModels}" 
+                                  MinHeight="100"
                                   AutoGenerateColumns="False"
                                   IsReadOnly="True"
                                   GridLinesVisibility="All"
