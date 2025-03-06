@@ -53,16 +53,13 @@ public partial class MainWindowViewModel : ObservableObject
         _ollamaService = ollamaService;
         Initialize();
     }
-
     private async void Initialize()
     {
         // 获取硬件信息
         HardwareInfo = _hardwareService.GetHardwareInfo();
-
-        // 获取 Ollama 信息
+          // 获取 Ollama 信息
         OllamaInfo = await _ollamaService.GetOllamaInfo();
     }
-
     [RelayCommand]
     private async Task InstallOllama()
     {
@@ -193,7 +190,7 @@ public partial class MainWindowViewModel : ObservableObject
 
                 if (!string.IsNullOrEmpty(path))
                 {
-                    OllamaInfo.ModelPath = path;
+                    OllamaInfo.ModelInstallPath = path;
 
                     // 设置环境变量，使 Ollama 使用新路径
                     Environment.SetEnvironmentVariable("OLLAMA_MODELS", path, EnvironmentVariableTarget.User);

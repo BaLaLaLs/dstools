@@ -9,7 +9,7 @@ public class OllamaInfo
     public InstallStatus InstallStatus { get; set; }
     public RunningStatus RunningStatus { get; set; }
     public string Version { get; set; } = string.Empty;
-    public string ModelPath { get; set; } = string.Empty;
+    public string ModelInstallPath { get; set; } = string.Empty;
     public ObservableCollection<ModelInfo> InstalledModels { get; set; } = new();
     public List<AvailableModel> AvailableModels { get; set; } = new();
 }

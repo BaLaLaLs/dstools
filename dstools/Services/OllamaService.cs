@@ -93,7 +93,8 @@ public class OllamaService : IOllamaService
             psProcess.WaitForExit();
 
             info.RunningStatus = !string.IsNullOrEmpty(output) ? RunningStatus.Running : RunningStatus.Stopped;
-
+            // 获取模型安装路径
+            info.ModelInstallPath = GetModelInstallPath();
             // 如果正在运行，获取已安装的模型
             if (info.RunningStatus == RunningStatus.Running)
             {
@@ -392,5 +393,28 @@ public class OllamaService : IOllamaService
         }
 
         return string.Empty;
+    }
+    // 获取Ollama 模型安装位置
+    public string GetModelInstallPath()
+    {
+        try
+        {
+            // 首先尝试从环境变量获取
+            string modelPath = Environment.GetEnvironmentVariable("OLLAMA_MODELS", EnvironmentVariableTarget.User) ?? "";
+            
+            // 如果环境变量未设置，使用默认路径
+            if (string.IsNullOrEmpty(modelPath))
+            {
+                string userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                modelPath = Path.Combine(userProfile, ".ollama", "models");
+            }
+            
+            return modelPath;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"获取模型路径时出错: {ex.Message}");
+            return string.Empty;
+        }
     }
 }

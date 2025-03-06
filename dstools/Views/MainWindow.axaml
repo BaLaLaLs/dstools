@@ -118,8 +118,8 @@
                             <!-- 模型路径行 -->
                             <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,5,0,0"
                                   IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}">
-                                <TextBlock Grid.Column="0" Classes="value" Text="模型路径：" />
-                                <TextBlock Grid.Column="1" Classes="value" Text="{Binding OllamaInfo.ModelPath}" 
+                                <TextBlock Grid.Column="0" Classes="value" Text="模型安装路径：" />
+                                <TextBlock Grid.Column="1" Classes="value" Text="{Binding OllamaInfo.ModelInstallPath}" 
                                            TextWrapping="Wrap" TextTrimming="CharacterEllipsis" 
                                            VerticalAlignment="Center" />
                                 <Button Grid.Column="2" Content="更改" Command="{Binding SelectModelPathCommand}" 
