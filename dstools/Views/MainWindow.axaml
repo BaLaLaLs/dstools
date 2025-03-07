@@ -36,7 +36,7 @@
         </Style>
         <Style Selector="Border.item">
             <Setter Property="Padding" Value="10" />
-            <Setter Property="Margin" Value="5" />
+            <Setter Property="Margin" Value="0" />
             <Setter Property="Background" Value="#2D2D30" />
         </Style>
         <Style Selector="PathIcon">
@@ -185,164 +185,216 @@
                     </Border>
                 </Grid>
                 <!-- Ollama -->
-                <Border Classes="item">
+                <Border Classes="item" Margin="0,10,0,0">
                     <StackPanel>
                         <Grid ColumnDefinitions="Auto,Auto,*">
-                            <Border Grid.Column="0" Background="White" CornerRadius="4">
-                                <Image Source="/Assets/ollama.png" Width="22" Height="22" />
-                            </Border>
+                            <lucideAvalonia:Lucide Grid.Column="0" Icon="Box" StrokeBrush="White"
+                                                   StrokeThickness="1.5"
+                                                   Width="22" Height="22" />
                             <TextBlock Grid.Column="1" Classes="title" Text="Ollama" />
-                            <StackPanel Grid.Column="2" Orientation="Vertical">
-                                <!-- 状态信息行 -->
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Classes="value" Text="安装状态：" />
-                                    <TextBlock Classes="value"
-                                               Text="{Binding OllamaInfo.InstallStatus, Converter={StaticResource OllamaStatusConverter}}"
-                                               FontSize="12" />
-                                    <TextBlock Classes="value" Text="   运行状态："
-                                               IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}" />
-                                    <TextBlock Classes="value"
-                                               Text="{Binding OllamaInfo.RunningStatus, Converter={StaticResource OllamaStatusConverter}}"
-                                               FontSize="12"
-                                               IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}" />
-                                </StackPanel>
-
-                                <!-- 版本信息行 -->
-                                <StackPanel Orientation="Horizontal" Margin="0,5,0,0"
-                                            IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}">
-                                    <TextBlock Classes="value" Text="版本：" />
-                                    <TextBlock Classes="value" Text="{Binding OllamaInfo.Version}" />
-                                </StackPanel>
-
-                                <!-- 模型路径行 -->
-                                <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,5,0,0"
-                                      IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}">
-                                    <TextBlock Grid.Column="0" Classes="value" Text="模型安装路径：" />
-                                    <TextBlock Grid.Column="1" Classes="value"
-                                               Text="{Binding OllamaInfo.ModelInstallPath}"
-                                               TextWrapping="Wrap" TextTrimming="CharacterEllipsis"
-                                               VerticalAlignment="Center" />
-                                    <Button Grid.Column="2" Content="更改" Command="{Binding SelectModelPathCommand}"
-                                            Classes="accent" Padding="5,2" />
-                                </Grid>
-                            </StackPanel>
+                            <TextBlock Grid.Column="2" Classes="value" Text="本地大语言模型运行环境" />
                         </Grid>
 
+                        <!-- Ollama状态信息卡片 -->
+                        <Border Margin="10,10,0,0" Padding="10" Background="#252528" CornerRadius="4">
+                            <Grid ColumnDefinitions="Auto,*">
+                                <Border Grid.Column="0" Background="#2196F3" CornerRadius="4" Width="32"
+                                        Height="32" Margin="0,0,10,0">
+                                    <Image Source="/Assets/ollama.png" Width="22" Height="22" />
+                                </Border>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="运行状态" FontWeight="Bold" Foreground="White" />
+                                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                        <TextBlock Text="安装状态：" Foreground="#CCCCCC" FontSize="12" />
+                                        <TextBlock Text="{Binding OllamaInfo.InstallStatus, Converter={StaticResource OllamaStatusConverter}}"
+                                                   Foreground="#CCCCCC" FontSize="12" />
+                                        <TextBlock Text="   运行状态：" Foreground="#CCCCCC" FontSize="12"
+                                                   IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}" />
+                                        <TextBlock Text="{Binding OllamaInfo.RunningStatus, Converter={StaticResource OllamaStatusConverter}}"
+                                                   Foreground="#CCCCCC" FontSize="12"
+                                                   IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                        
+                        <!-- 版本信息卡片 -->
+                        <Border Margin="10,10,0,0" Padding="10" Background="#252528" CornerRadius="4"
+                                IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}">
+                            <Grid ColumnDefinitions="Auto,*">
+                                <Border Grid.Column="0" Background="#9C27B0" CornerRadius="4" Width="32"
+                                        Height="32" Margin="0,0,10,0">
+                                    <lucideAvalonia:Lucide Icon="Info" StrokeBrush="White" StrokeThickness="1.5"
+                                                           Width="22" Height="22" />
+                                </Border>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="版本信息" FontWeight="Bold" Foreground="White" />
+                                    <TextBlock Text="{Binding OllamaInfo.Version}"
+                                               Foreground="#CCCCCC" TextWrapping="Wrap" Margin="0,5,0,0"
+                                               FontSize="12" />
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                        
+                        <!-- 模型路径卡片 -->
+                        <Border Margin="10,10,0,0" Padding="10" Background="#252528" CornerRadius="4"
+                                IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}">
+                            <Grid ColumnDefinitions="Auto,*">
+                                <Border Grid.Column="0" Background="#FF9800" CornerRadius="4" Width="32"
+                                        Height="32" Margin="0,0,10,0">
+                                    <lucideAvalonia:Lucide Icon="FolderOpen" StrokeBrush="White" StrokeThickness="1.5"
+                                                           Width="22" Height="22" />
+                                </Border>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="模型安装路径" FontWeight="Bold" Foreground="White" />
+                                    <Grid ColumnDefinitions="*,Auto" Margin="0,5,0,0">
+                                        <TextBlock Grid.Column="0" Text="{Binding OllamaInfo.ModelInstallPath}"
+                                                   Foreground="#CCCCCC" TextWrapping="Wrap" TextTrimming="CharacterEllipsis"
+                                                   VerticalAlignment="Center" FontSize="12" />
+                                        <Button Grid.Column="1" Content="更改" Command="{Binding SelectModelPathCommand}"
+                                                Classes="accent" Padding="5,2" />
+                                    </Grid>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
                         <!-- 操作按钮区域 -->
-                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0" HorizontalAlignment="Right">
-                            <Button Classes="accent" Content="安装" Command="{Binding InstallOllamaCommand}"
-                                    Margin="0,0,10,0"
-                                    IsVisible="{Binding OllamaInfo.InstallStatus, Converter={StaticResource OllamaNotInstalledConverter}}" />
-                            <ProgressBar Value="{Binding DownloadProgress}" Width="100" Height="2"
-                                         IsVisible="{Binding IsDownloading}" Margin="0,0,10,0" />
-                            <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" IsVisible="{Binding HasError}"
-                                       Margin="0,0,10,0" />
-                            <Button Classes="accent" Content="启动" Command="{Binding StartOllamaCommand}"
-                                    IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}"
-                                    IsEnabled="{Binding OllamaInfo.RunningStatus, Converter={StaticResource OllamaRunningStatusConverter}}"
-                                    Margin="0,0,10,0" />
-                            <Button Classes="accent" Content="停止" Command="{Binding StopOllamaCommand}"
-                                    IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}"
-                                    IsEnabled="{Binding OllamaInfo.RunningStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaRunningStatusConverter}}" />
-                        </StackPanel>
+                        <Border Margin="10,10,0,0" Padding="10" Background="#252528" CornerRadius="4">
+                            <Grid ColumnDefinitions="Auto,*">
+                                <Border Grid.Column="0" Background="#4CAF50" CornerRadius="4" Width="32"
+                                        Height="32" Margin="0,0,10,0">
+                                    <lucideAvalonia:Lucide Icon="Settings" StrokeBrush="White" StrokeThickness="1.5"
+                                                           Width="22" Height="22" />
+                                </Border>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="操作控制" FontWeight="Bold" Foreground="White" />
+                                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                        <Button Classes="accent" Content="安装" Command="{Binding InstallOllamaCommand}"
+                                                Margin="0,0,10,0"
+                                                IsVisible="{Binding OllamaInfo.InstallStatus, Converter={StaticResource OllamaNotInstalledConverter}}" />
+                                        <ProgressBar Value="{Binding DownloadProgress}" Width="100" Height="2"
+                                                     IsVisible="{Binding IsDownloading}" Margin="0,0,10,0" />
+                                        <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" IsVisible="{Binding HasError}"
+                                                   Margin="0,0,10,0" />
+                                        <Button Classes="accent" Content="启动" Command="{Binding StartOllamaCommand}"
+                                                IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}"
+                                                IsEnabled="{Binding OllamaInfo.RunningStatus, Converter={StaticResource OllamaRunningStatusConverter}}"
+                                                Margin="0,0,10,0" />
+                                        <Button Classes="accent" Content="停止" Command="{Binding StopOllamaCommand}"
+                                                IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}"
+                                                IsEnabled="{Binding OllamaInfo.RunningStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaRunningStatusConverter}}" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
 
                         <!-- 模型列表区域 -->
-                        <StackPanel Margin="0,10,0,0"
-                                    IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}">
-                            <!-- 已安装模型列表 -->
-                            <TextBlock Classes="value" Text="已安装模型：" Margin="0,0,0,5" />
-                            <DataGrid ItemsSource="{Binding OllamaInfo.InstalledModels}"
-                                      MinHeight="100"
-                                      AutoGenerateColumns="False"
-                                      IsReadOnly="True"
-                                      GridLinesVisibility="All"
-                                      BorderThickness="1"
-                                      BorderBrush="#2D2D30"
-                                      Background="#1E1E1E"
-                                      MaxHeight="150"
-                                      CanUserResizeColumns="True"
-                                      Margin="10,0,0,0"
-                                      Foreground="White">
-                                <DataGrid.Resources>
-                                    <SolidColorBrush x:Key="DataGridColumnHeaderBackgroundBrush" Color="#2D2D30" />
-                                    <SolidColorBrush x:Key="DataGridColumnHeaderForegroundBrush" Color="White" />
-                                    <SolidColorBrush x:Key="DataGridRowBackgroundBrush" Color="#1E1E1E" />
-                                    <SolidColorBrush x:Key="DataGridRowForegroundBrush" Color="White" />
-                                </DataGrid.Resources>
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="模型名称"
-                                                        Binding="{Binding Name}"
-                                                        Width="*" />
-                                    <DataGridTextColumn Header="大小"
-                                                        Binding="{Binding Size, StringFormat={}{0:N1}GB}"
-                                                        Width="100" />
-                                    <DataGridTextColumn Header="修改时间"
-                                                        Binding="{Binding ModifiedAt}"
-                                                        Width="150" />
-                                    <DataGridTemplateColumn Header="操作" Width="Auto">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <Button Content="删除"
-                                                        Classes="accent"
-                                                        Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).DeleteModelCommand}"
-                                                        CommandParameter="{Binding Name}"
-                                                        Margin="5,0" />
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                    </DataGridTemplateColumn>
-                                </DataGrid.Columns>
-                            </DataGrid>
+                        <Border Margin="10,10,0,0" Padding="10" Background="#252528" CornerRadius="4"
+                                IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}">
+                            <Grid ColumnDefinitions="Auto,*">
+                                <Border Grid.Column="0" Background="#E91E63" CornerRadius="4" Width="32"
+                                        Height="32" Margin="0,0,10,0" VerticalAlignment="Top">
+                                    <lucideAvalonia:Lucide Icon="Database" StrokeBrush="White" StrokeThickness="1.5"
+                                                           Width="22" Height="22" />
+                                </Border>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="模型管理" FontWeight="Bold" Foreground="White" />
+                                    
+                                    <!-- 已安装模型列表 -->
+                                    <TextBlock Text="已安装模型" Foreground="#CCCCCC" Margin="0,10,0,5" FontSize="12" />
+                                    <DataGrid ItemsSource="{Binding OllamaInfo.InstalledModels}"
+                                              MinHeight="100"
+                                              AutoGenerateColumns="False"
+                                              IsReadOnly="True"
+                                              GridLinesVisibility="All"
+                                              BorderThickness="1"
+                                              BorderBrush="#2D2D30"
+                                              Background="#1E1E1E"
+                                              MaxHeight="150"
+                                              CanUserResizeColumns="True"
+                                              Margin="0,5,0,0"
+                                              Foreground="White">
+                                        <DataGrid.Resources>
+                                            <SolidColorBrush x:Key="DataGridColumnHeaderBackgroundBrush" Color="#2D2D30" />
+                                            <SolidColorBrush x:Key="DataGridColumnHeaderForegroundBrush" Color="White" />
+                                            <SolidColorBrush x:Key="DataGridRowBackgroundBrush" Color="#1E1E1E" />
+                                            <SolidColorBrush x:Key="DataGridRowForegroundBrush" Color="White" />
+                                        </DataGrid.Resources>
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="模型名称"
+                                                                Binding="{Binding Name}"
+                                                                Width="*" />
+                                            <DataGridTextColumn Header="大小"
+                                                                Binding="{Binding Size, StringFormat={}{0:N1}GB}"
+                                                                Width="100" />
+                                            <DataGridTextColumn Header="修改时间"
+                                                                Binding="{Binding ModifiedAt}"
+                                                                Width="150" />
+                                            <DataGridTemplateColumn Header="操作" Width="Auto">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <Button Content="删除"
+                                                                Classes="accent"
+                                                                Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).DeleteModelCommand}"
+                                                                CommandParameter="{Binding Name}"
+                                                                Margin="5,0" />
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
 
-                            <!-- 可安装模型列表 -->
-                            <TextBlock Classes="value" Text="可安装模型：" Margin="0,15,0,5" />
-                            <DataGrid ItemsSource="{Binding OllamaInfo.AvailableModels}"
-                                      MinHeight="100"
-                                      AutoGenerateColumns="False"
-                                      IsReadOnly="True"
-                                      GridLinesVisibility="All"
-                                      BorderThickness="1"
-                                      BorderBrush="#2D2D30"
-                                      Background="#1E1E1E"
-                                      MaxHeight="150"
-                                      CanUserResizeColumns="True"
-                                      Margin="10,0,0,0"
-                                      Foreground="White">
-                                <DataGrid.Resources>
-                                    <SolidColorBrush x:Key="DataGridColumnHeaderBackgroundBrush" Color="#2D2D30" />
-                                    <SolidColorBrush x:Key="DataGridColumnHeaderForegroundBrush" Color="White" />
-                                    <SolidColorBrush x:Key="DataGridRowBackgroundBrush" Color="#1E1E1E" />
-                                    <SolidColorBrush x:Key="DataGridRowForegroundBrush" Color="White" />
-                                </DataGrid.Resources>
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="模型名称"
-                                                        Binding="{Binding Name}"
-                                                        Width="*" />
-                                    <DataGridTextColumn Header="大小"
-                                                        Binding="{Binding Size, StringFormat={}{0:N1}GB}"
-                                                        Width="100" />
-                                    <DataGridTextColumn Header="描述"
-                                                        Binding="{Binding Description}"
-                                                        Width="150" />
-                                    <DataGridTemplateColumn Header="操作" Width="Auto">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <Button Content="安装"
-                                                        Classes="link"
-                                                        Background="Transparent"
-                                                        BorderThickness="0"
-                                                        Foreground="#4D94FF"
-                                                        Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).InstallModelCommand}"
-                                                        CommandParameter="{Binding Url}"
-                                                        Margin="5,0" />
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                    </DataGridTemplateColumn>
-                                </DataGrid.Columns>
-                            </DataGrid>
-                        </StackPanel>
+                                    <!-- 可安装模型列表 -->
+                                    <TextBlock Text="可安装模型" Foreground="#CCCCCC" Margin="0,15,0,5" FontSize="12" />
+                                    <DataGrid ItemsSource="{Binding OllamaInfo.AvailableModels}"
+                                              MinHeight="100"
+                                              AutoGenerateColumns="False"
+                                              IsReadOnly="True"
+                                              GridLinesVisibility="All"
+                                              BorderThickness="1"
+                                              BorderBrush="#2D2D30"
+                                              Background="#1E1E1E"
+                                              MaxHeight="150"
+                                              CanUserResizeColumns="True"
+                                              Margin="0,5,0,0"
+                                              Foreground="White">
+                                        <DataGrid.Resources>
+                                            <SolidColorBrush x:Key="DataGridColumnHeaderBackgroundBrush" Color="#2D2D30" />
+                                            <SolidColorBrush x:Key="DataGridColumnHeaderForegroundBrush" Color="White" />
+                                            <SolidColorBrush x:Key="DataGridRowBackgroundBrush" Color="#1E1E1E" />
+                                            <SolidColorBrush x:Key="DataGridRowForegroundBrush" Color="White" />
+                                        </DataGrid.Resources>
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="模型名称"
+                                                                Binding="{Binding Name}"
+                                                                Width="*" />
+                                            <DataGridTextColumn Header="大小"
+                                                                Binding="{Binding Size, StringFormat={}{0:N1}GB}"
+                                                                Width="100" />
+                                            <DataGridTextColumn Header="描述"
+                                                                Binding="{Binding Description}"
+                                                                Width="150" />
+                                            <DataGridTemplateColumn Header="操作" Width="Auto">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <Button Content="安装"
+                                                                Classes="link"
+                                                                Background="Transparent"
+                                                                BorderThickness="0"
+                                                                Foreground="#4D94FF"
+                                                                Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).InstallModelCommand}"
+                                                                CommandParameter="{Binding Url}"
+                                                                Margin="5,0" />
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
                     </StackPanel>
                 </Border>
-
 
             </StackPanel>
         </ScrollViewer>
