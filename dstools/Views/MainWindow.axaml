@@ -10,7 +10,7 @@
         xmlns:lucideAvalonia="clr-namespace:LucideAvalonia;assembly=LucideAvalonia"
         Icon="/Assets/avalonia-logo.ico"
         Title="DeepSeek部署工具"
-        Width="500"
+        Width="1000"
         Height="900">
 
     <Window.Resources>
@@ -25,7 +25,7 @@
     </Design.DataContext>
 
     <Window.Styles>
-            <Style Selector="Button.link">
+        <Style Selector="Button.link">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderThickness" Value="0" />
             <Setter Property="Padding" Value="5,0" />
@@ -60,269 +60,290 @@
     <Border Background="#1E1E1E" Padding="10">
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel>
-            <!-- CPU -->
-            <Border Classes="item">
-                <StackPanel>
-                    <Grid ColumnDefinitions="Auto,Auto,*">
-                        <lucideAvalonia:Lucide Grid.Column="0" Icon="Cpu" StrokeBrush="White" StrokeThickness="1.5"
-                                           Width="22" Height="22" />
-                        <TextBlock Grid.Column="1" Classes="title" Text="硬件信息" />
-                        <TextBlock Grid.Column="2" Classes="value" Text="系统硬件配置信息" />
-                    </Grid>
-                    
-                    <!-- CPU Info -->
-                    <Border Margin="10,10,0,0" Padding="10" Background="#252528" CornerRadius="4">
-                        <Grid ColumnDefinitions="Auto,*">
-                            <Border Grid.Column="0" Background="#2196F3" CornerRadius="4" Width="32" Height="32" Margin="0,0,10,0">
-                                <lucideAvalonia:Lucide Icon="Cpu" StrokeBrush="White" StrokeThickness="1.5" Width="22" Height="22"/>
-                            </Border>
-                            <StackPanel Grid.Column="1">
-                                <TextBlock Text="处理器" FontWeight="Bold" Foreground="White" />
-                                <TextBlock Text="{Binding HardwareInfo.CpuName}" 
-                                           Foreground="#CCCCCC" TextWrapping="Wrap" Margin="0,5,0,0" FontSize="12" />
-                            </StackPanel>
-                        </Grid>
-                    </Border>
-                    
-                    <!-- GPU Info -->
-                    <Border Margin="10,10,0,0" Padding="10" Background="#252528" CornerRadius="4">
-                        <Grid ColumnDefinitions="Auto,*">
-                            <Border Grid.Column="0" Background="#9C27B0" CornerRadius="4" Width="32" Height="32" Margin="0,0,10,0">
-                                <lucideAvalonia:Lucide Icon="Microchip" StrokeBrush="White" StrokeThickness="1.5" Width="22" Height="22"/>
-                            </Border>
-                            <StackPanel Grid.Column="1">
-                                <TextBlock Text="显卡" FontWeight="Bold" Foreground="White" />
-                                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                                    <TextBlock Text="{Binding HardwareInfo.GpuName}" 
-                                               Foreground="#CCCCCC" TextWrapping="Wrap" FontSize="12" />
-                                    <TextBlock Text=" | 显存: " 
-                                               Foreground="#CCCCCC" TextWrapping="Wrap" FontSize="12" />
-                                    <TextBlock Text="{Binding HardwareInfo.GpuMemory, StringFormat={}{0}G}" 
-                                               Foreground="#CCCCCC" TextWrapping="Wrap" FontSize="12" />
-                                </StackPanel>
-                            </StackPanel>
-                        </Grid>
-                    </Border>
-                    
-                    <!-- Memory Info -->
-                    <Border Margin="10,10,0,0" Padding="10" Background="#252528" CornerRadius="4">
-                        <Grid ColumnDefinitions="Auto,*">
-                            <Border Grid.Column="0" Background="#4CAF50" CornerRadius="4" Width="32" Height="32" Margin="0,0,10,0">
-                                <lucideAvalonia:Lucide Icon="MemoryStick" StrokeBrush="White" StrokeThickness="1.5" Width="22" Height="22"/>
-                            </Border>
-                            <StackPanel Grid.Column="1">
-                                <TextBlock Text="内存" FontWeight="Bold" Foreground="White" />
-                                <TextBlock Text="{Binding HardwareInfo.TotalMemory, StringFormat={}{0:F0} GB}" 
-                                           Foreground="#CCCCCC" TextWrapping="Wrap" Margin="0,5,0,0" FontSize="12" />
-                            </StackPanel>
-                        </Grid>
-                    </Border>
-                </StackPanel>
-            </Border>
-            
-            <!-- Ollama -->
-            <Border Classes="item">
-                <StackPanel>
-                    <Grid ColumnDefinitions="Auto,Auto,*">
-                        <Border Grid.Column="0" Background="White" CornerRadius="4">
-                            <Image Source="/Assets/ollama.png" Width="22" Height="22" />
-                        </Border>
-                        <TextBlock Grid.Column="1" Classes="title" Text="Ollama" />
-                        <StackPanel Grid.Column="2" Orientation="Vertical">
-                            <!-- 状态信息行 -->
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Classes="value" Text="安装状态：" />
-                                <TextBlock Classes="value"
-                                           Text="{Binding OllamaInfo.InstallStatus, Converter={StaticResource OllamaStatusConverter}}"
-                                           FontSize="12" />
-                                <TextBlock Classes="value" Text="   运行状态："
-                                           IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}" />
-                                <TextBlock Classes="value"
-                                           Text="{Binding OllamaInfo.RunningStatus, Converter={StaticResource OllamaStatusConverter}}"
-                                           FontSize="12"
-                                           IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}" />
-                            </StackPanel>
-                            
-                            <!-- 版本信息行 -->
-                            <StackPanel Orientation="Horizontal" Margin="0,5,0,0"
-                                        IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}">
-                                <TextBlock Classes="value" Text="版本：" />
-                                <TextBlock Classes="value" Text="{Binding OllamaInfo.Version}" />
-                            </StackPanel>
-                            
-                            <!-- 模型路径行 -->
-                            <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,5,0,0"
-                                  IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}">
-                                <TextBlock Grid.Column="0" Classes="value" Text="模型安装路径：" />
-                                <TextBlock Grid.Column="1" Classes="value" Text="{Binding OllamaInfo.ModelInstallPath}" 
-                                           TextWrapping="Wrap" TextTrimming="CharacterEllipsis" 
-                                           VerticalAlignment="Center" />
-                                <Button Grid.Column="2" Content="更改" Command="{Binding SelectModelPathCommand}" 
-                                        Classes="accent" Padding="5,2" />
+                <Grid ColumnDefinitions="*,*">
+                    <!-- 硬件信息 -->
+                    <Border Classes="item" Grid.Column="0" Margin="0,0,5,0">
+                        <StackPanel>
+                            <Grid ColumnDefinitions="Auto,Auto,*">
+                                <lucideAvalonia:Lucide Grid.Column="0" Icon="Cpu" StrokeBrush="White"
+                                                       StrokeThickness="1.5"
+                                                       Width="22" Height="22" />
+                                <TextBlock Grid.Column="1" Classes="title" Text="硬件信息" />
+                                <TextBlock Grid.Column="2" Classes="value" Text="系统硬件配置信息" />
                             </Grid>
-                        </StackPanel>
-                    </Grid>
-                    
-                    <!-- 操作按钮区域 -->
-                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0" HorizontalAlignment="Right">
-                        <Button Classes="accent" Content="安装" Command="{Binding InstallOllamaCommand}"
-                                Margin="0,0,10,0"
-                                IsVisible="{Binding OllamaInfo.InstallStatus, Converter={StaticResource OllamaNotInstalledConverter}}" />
-                        <ProgressBar Value="{Binding DownloadProgress}" Width="100" Height="2"
-                                     IsVisible="{Binding IsDownloading}" Margin="0,0,10,0" />
-                        <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" IsVisible="{Binding HasError}"
-                                   Margin="0,0,10,0" />
-                        <Button Classes="accent" Content="启动" Command="{Binding StartOllamaCommand}"
-                                IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}"
-                                IsEnabled="{Binding OllamaInfo.RunningStatus, Converter={StaticResource OllamaRunningStatusConverter}}"
-                                Margin="0,0,10,0" />
-                        <Button Classes="accent" Content="停止" Command="{Binding StopOllamaCommand}"
-                                IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}"
-                                IsEnabled="{Binding OllamaInfo.RunningStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaRunningStatusConverter}}" />
-                    </StackPanel>
-                    
-                    <!-- 模型列表区域 -->
-                    <StackPanel Margin="0,10,0,0"
-                                IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}">
-                        <!-- 已安装模型列表 -->
-                        <TextBlock Classes="value" Text="已安装模型：" Margin="0,0,0,5" />
-                        <DataGrid ItemsSource="{Binding OllamaInfo.InstalledModels}" 
-                                  MinHeight="100"
-                                  AutoGenerateColumns="False"
-                                  IsReadOnly="True"
-                                  GridLinesVisibility="All"
-                                  BorderThickness="1"
-                                  BorderBrush="#2D2D30"
-                                  Background="#1E1E1E"
-                                  MaxHeight="150"
-                                  CanUserResizeColumns="True"
-                                  Margin="10,0,0,0"
-                                  Foreground="White">
-                            <DataGrid.Resources>
-                                <SolidColorBrush x:Key="DataGridColumnHeaderBackgroundBrush" Color="#2D2D30"/>
-                                <SolidColorBrush x:Key="DataGridColumnHeaderForegroundBrush" Color="White"/>
-                                <SolidColorBrush x:Key="DataGridRowBackgroundBrush" Color="#1E1E1E"/>
-                                <SolidColorBrush x:Key="DataGridRowForegroundBrush" Color="White"/>
-                            </DataGrid.Resources>
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="模型名称" 
-                                                    Binding="{Binding Name}" 
-                                                    Width="*" />
-                                <DataGridTextColumn Header="大小" 
-                                                    Binding="{Binding Size, StringFormat={}{0:N1}GB}" 
-                                                    Width="100" />
-                                <DataGridTextColumn Header="修改时间" 
-                                                    Binding="{Binding ModifiedAt}" 
-                                                    Width="150" />
-                                <DataGridTemplateColumn Header="操作" Width="Auto">
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <Button Content="删除"
-                                                    Classes="accent"
-                                                    Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).DeleteModelCommand}"
-                                                    CommandParameter="{Binding Name}"
-                                                    Margin="5,0" />
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
-                            </DataGrid.Columns>
-                        </DataGrid>
 
-                        <!-- 可安装模型列表 -->
-                        <TextBlock Classes="value" Text="可安装模型：" Margin="0,15,0,5" />
-                        <DataGrid ItemsSource="{Binding OllamaInfo.AvailableModels}" 
-                                  MinHeight="100"
-                                  AutoGenerateColumns="False"
-                                  IsReadOnly="True"
-                                  GridLinesVisibility="All"
-                                  BorderThickness="1"
-                                  BorderBrush="#2D2D30"
-                                  Background="#1E1E1E"
-                                  MaxHeight="150"
-                                  CanUserResizeColumns="True"
-                                  Margin="10,0,0,0"
-                                  Foreground="White">
-                            <DataGrid.Resources>
-                                <SolidColorBrush x:Key="DataGridColumnHeaderBackgroundBrush" Color="#2D2D30"/>
-                                <SolidColorBrush x:Key="DataGridColumnHeaderForegroundBrush" Color="White"/>
-                                <SolidColorBrush x:Key="DataGridRowBackgroundBrush" Color="#1E1E1E"/>
-                                <SolidColorBrush x:Key="DataGridRowForegroundBrush" Color="White"/>
-                            </DataGrid.Resources>
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="模型名称" 
-                                                    Binding="{Binding Name}" 
-                                                    Width="*" />
-                                <DataGridTextColumn Header="大小" 
-                                                    Binding="{Binding Size, StringFormat={}{0:N1}GB}" 
-                                                    Width="100" />
-                                <DataGridTextColumn Header="描述" 
-                                                    Binding="{Binding Description}" 
-                                                    Width="150" />
-                                <DataGridTemplateColumn Header="操作" Width="Auto">
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <Button Content="安装"
-                                             Classes="link"
-                                                    Background="Transparent"
-                                                    BorderThickness="0"
-                                                    Foreground="#4D94FF"
-                                                    Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).InstallModelCommand}"
-                                                    CommandParameter="{Binding Url}"
-                                                    Margin="5,0" />
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
-                            </DataGrid.Columns>
-                        </DataGrid>
+                            <!-- CPU Info -->
+                            <Border Margin="10,10,0,0" Padding="10" Background="#252528" CornerRadius="4">
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <Border Grid.Column="0" Background="#2196F3" CornerRadius="4" Width="32"
+                                            Height="32" Margin="0,0,10,0">
+                                        <lucideAvalonia:Lucide Icon="Cpu" StrokeBrush="White" StrokeThickness="1.5"
+                                                               Width="22" Height="22" />
+                                    </Border>
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="处理器" FontWeight="Bold" Foreground="White" />
+                                        <TextBlock Text="{Binding HardwareInfo.CpuName}"
+                                                   Foreground="#CCCCCC" TextWrapping="Wrap" Margin="0,5,0,0"
+                                                   FontSize="12" />
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+
+                            <!-- GPU Info -->
+                            <Border Margin="10,10,0,0" Padding="10" Background="#252528" CornerRadius="4">
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <Border Grid.Column="0" Background="#9C27B0" CornerRadius="4" Width="32"
+                                            Height="32" Margin="0,0,10,0">
+                                        <lucideAvalonia:Lucide Icon="Microchip" StrokeBrush="White"
+                                                               StrokeThickness="1.5" Width="22" Height="22" />
+                                    </Border>
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="显卡" FontWeight="Bold" Foreground="White" />
+                                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                            <TextBlock Text="{Binding HardwareInfo.GpuName}"
+                                                       Foreground="#CCCCCC" TextWrapping="Wrap" FontSize="12" />
+                                            <TextBlock Text=" | 显存: "
+                                                       Foreground="#CCCCCC" TextWrapping="Wrap" FontSize="12" />
+                                            <TextBlock Text="{Binding HardwareInfo.GpuMemory, StringFormat={}{0}G}"
+                                                       Foreground="#CCCCCC" TextWrapping="Wrap" FontSize="12" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+
+                            <!-- Memory Info -->
+                            <Border Margin="10,10,0,0" Padding="10" Background="#252528" CornerRadius="4">
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <Border Grid.Column="0" Background="#4CAF50" CornerRadius="4" Width="32"
+                                            Height="32" Margin="0,0,10,0">
+                                        <lucideAvalonia:Lucide Icon="MemoryStick" StrokeBrush="White"
+                                                               StrokeThickness="1.5" Width="22" Height="22" />
+                                    </Border>
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="内存" FontWeight="Bold" Foreground="White" />
+                                        <TextBlock Text="{Binding HardwareInfo.TotalMemory, StringFormat={}{0:F0} GB}"
+                                                   Foreground="#CCCCCC" TextWrapping="Wrap" Margin="0,5,0,0"
+                                                   FontSize="12" />
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+                    <!-- 大语言模型应用推荐 -->
+                    <Border Classes="item" Grid.Column="1" Margin="5,0,0,0">
+                        <StackPanel>
+                            <Grid ColumnDefinitions="Auto,Auto,*">
+                                <lucideAvalonia:Lucide Grid.Column="0" Icon="Sparkles" StrokeBrush="White"
+                                                       StrokeThickness="1.5"
+                                                       Width="22" Height="22" />
+                                <TextBlock Grid.Column="1" Classes="title" Text="推荐工具" />
+                                <TextBlock Grid.Column="2" Classes="value" Text="其他优秀的大语言模型应用" />
+                            </Grid>
+
+                            <!-- Cherry Studio -->
+                            <Border Margin="10,10,0,0" Padding="10" Background="#252528" CornerRadius="4">
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <Border Grid.Column="0" Background="#FF4081" CornerRadius="4" Width="32"
+                                            Height="32" Margin="0,0,10,0">
+                                        <TextBlock Text="C" FontWeight="Bold" FontSize="20" VerticalAlignment="Center"
+                                                   HorizontalAlignment="Center" Foreground="White" />
+                                    </Border>
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="Cherry Studio" FontWeight="Bold" Foreground="White" />
+                                        <TextBlock Text="功能丰富的AI助手，支持多种大语言模型，提供对话、绘图等功能"
+                                                   Foreground="#CCCCCC" TextWrapping="Wrap" Margin="0,5,0,0"
+                                                   FontSize="12" />
+                                        <Button Content="官网" Classes="link" Foreground="#4D94FF" Margin="0,5,0,0"
+                                                Padding="0" Background="Transparent" BorderThickness="0"
+                                                Command="{Binding OpenBrowserCommand}"
+                                                CommandParameter="https://docs.cherry-ai.com/" />
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+
+                            <!-- LM Studio -->
+                            <Border Margin="10,10,0,0" Padding="10" Background="#252528" CornerRadius="4">
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <Border Grid.Column="0" Background="#4CAF50" CornerRadius="4" Width="32"
+                                            Height="32" Margin="0,0,10,0">
+                                        <TextBlock Text="L" FontWeight="Bold" FontSize="20" VerticalAlignment="Center"
+                                                   HorizontalAlignment="Center" Foreground="White" />
+                                    </Border>
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="LM Studio" FontWeight="Bold" Foreground="White" />
+                                        <TextBlock Text="本地运行大语言模型的桌面应用，支持多种开源模型，提供简洁的用户界面"
+                                                   Foreground="#CCCCCC" TextWrapping="Wrap" Margin="0,5,0,0"
+                                                   FontSize="12" />
+                                        <Button Content="官网" Classes="link" Foreground="#4D94FF" Margin="0,5,0,0"
+                                                Command="{Binding OpenBrowserCommand}"
+                                                CommandParameter="https://lmstudio.ai/"
+                                                Padding="0" Background="Transparent" BorderThickness="0" />
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+                <!-- Ollama -->
+                <Border Classes="item">
+                    <StackPanel>
+                        <Grid ColumnDefinitions="Auto,Auto,*">
+                            <Border Grid.Column="0" Background="White" CornerRadius="4">
+                                <Image Source="/Assets/ollama.png" Width="22" Height="22" />
+                            </Border>
+                            <TextBlock Grid.Column="1" Classes="title" Text="Ollama" />
+                            <StackPanel Grid.Column="2" Orientation="Vertical">
+                                <!-- 状态信息行 -->
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Classes="value" Text="安装状态：" />
+                                    <TextBlock Classes="value"
+                                               Text="{Binding OllamaInfo.InstallStatus, Converter={StaticResource OllamaStatusConverter}}"
+                                               FontSize="12" />
+                                    <TextBlock Classes="value" Text="   运行状态："
+                                               IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}" />
+                                    <TextBlock Classes="value"
+                                               Text="{Binding OllamaInfo.RunningStatus, Converter={StaticResource OllamaStatusConverter}}"
+                                               FontSize="12"
+                                               IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}" />
+                                </StackPanel>
+
+                                <!-- 版本信息行 -->
+                                <StackPanel Orientation="Horizontal" Margin="0,5,0,0"
+                                            IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}">
+                                    <TextBlock Classes="value" Text="版本：" />
+                                    <TextBlock Classes="value" Text="{Binding OllamaInfo.Version}" />
+                                </StackPanel>
+
+                                <!-- 模型路径行 -->
+                                <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,5,0,0"
+                                      IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}">
+                                    <TextBlock Grid.Column="0" Classes="value" Text="模型安装路径：" />
+                                    <TextBlock Grid.Column="1" Classes="value"
+                                               Text="{Binding OllamaInfo.ModelInstallPath}"
+                                               TextWrapping="Wrap" TextTrimming="CharacterEllipsis"
+                                               VerticalAlignment="Center" />
+                                    <Button Grid.Column="2" Content="更改" Command="{Binding SelectModelPathCommand}"
+                                            Classes="accent" Padding="5,2" />
+                                </Grid>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- 操作按钮区域 -->
+                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0" HorizontalAlignment="Right">
+                            <Button Classes="accent" Content="安装" Command="{Binding InstallOllamaCommand}"
+                                    Margin="0,0,10,0"
+                                    IsVisible="{Binding OllamaInfo.InstallStatus, Converter={StaticResource OllamaNotInstalledConverter}}" />
+                            <ProgressBar Value="{Binding DownloadProgress}" Width="100" Height="2"
+                                         IsVisible="{Binding IsDownloading}" Margin="0,0,10,0" />
+                            <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" IsVisible="{Binding HasError}"
+                                       Margin="0,0,10,0" />
+                            <Button Classes="accent" Content="启动" Command="{Binding StartOllamaCommand}"
+                                    IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}"
+                                    IsEnabled="{Binding OllamaInfo.RunningStatus, Converter={StaticResource OllamaRunningStatusConverter}}"
+                                    Margin="0,0,10,0" />
+                            <Button Classes="accent" Content="停止" Command="{Binding StopOllamaCommand}"
+                                    IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}"
+                                    IsEnabled="{Binding OllamaInfo.RunningStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaRunningStatusConverter}}" />
+                        </StackPanel>
+
+                        <!-- 模型列表区域 -->
+                        <StackPanel Margin="0,10,0,0"
+                                    IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}">
+                            <!-- 已安装模型列表 -->
+                            <TextBlock Classes="value" Text="已安装模型：" Margin="0,0,0,5" />
+                            <DataGrid ItemsSource="{Binding OllamaInfo.InstalledModels}"
+                                      MinHeight="100"
+                                      AutoGenerateColumns="False"
+                                      IsReadOnly="True"
+                                      GridLinesVisibility="All"
+                                      BorderThickness="1"
+                                      BorderBrush="#2D2D30"
+                                      Background="#1E1E1E"
+                                      MaxHeight="150"
+                                      CanUserResizeColumns="True"
+                                      Margin="10,0,0,0"
+                                      Foreground="White">
+                                <DataGrid.Resources>
+                                    <SolidColorBrush x:Key="DataGridColumnHeaderBackgroundBrush" Color="#2D2D30" />
+                                    <SolidColorBrush x:Key="DataGridColumnHeaderForegroundBrush" Color="White" />
+                                    <SolidColorBrush x:Key="DataGridRowBackgroundBrush" Color="#1E1E1E" />
+                                    <SolidColorBrush x:Key="DataGridRowForegroundBrush" Color="White" />
+                                </DataGrid.Resources>
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="模型名称"
+                                                        Binding="{Binding Name}"
+                                                        Width="*" />
+                                    <DataGridTextColumn Header="大小"
+                                                        Binding="{Binding Size, StringFormat={}{0:N1}GB}"
+                                                        Width="100" />
+                                    <DataGridTextColumn Header="修改时间"
+                                                        Binding="{Binding ModifiedAt}"
+                                                        Width="150" />
+                                    <DataGridTemplateColumn Header="操作" Width="Auto">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button Content="删除"
+                                                        Classes="accent"
+                                                        Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).DeleteModelCommand}"
+                                                        CommandParameter="{Binding Name}"
+                                                        Margin="5,0" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+                            <!-- 可安装模型列表 -->
+                            <TextBlock Classes="value" Text="可安装模型：" Margin="0,15,0,5" />
+                            <DataGrid ItemsSource="{Binding OllamaInfo.AvailableModels}"
+                                      MinHeight="100"
+                                      AutoGenerateColumns="False"
+                                      IsReadOnly="True"
+                                      GridLinesVisibility="All"
+                                      BorderThickness="1"
+                                      BorderBrush="#2D2D30"
+                                      Background="#1E1E1E"
+                                      MaxHeight="150"
+                                      CanUserResizeColumns="True"
+                                      Margin="10,0,0,0"
+                                      Foreground="White">
+                                <DataGrid.Resources>
+                                    <SolidColorBrush x:Key="DataGridColumnHeaderBackgroundBrush" Color="#2D2D30" />
+                                    <SolidColorBrush x:Key="DataGridColumnHeaderForegroundBrush" Color="White" />
+                                    <SolidColorBrush x:Key="DataGridRowBackgroundBrush" Color="#1E1E1E" />
+                                    <SolidColorBrush x:Key="DataGridRowForegroundBrush" Color="White" />
+                                </DataGrid.Resources>
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="模型名称"
+                                                        Binding="{Binding Name}"
+                                                        Width="*" />
+                                    <DataGridTextColumn Header="大小"
+                                                        Binding="{Binding Size, StringFormat={}{0:N1}GB}"
+                                                        Width="100" />
+                                    <DataGridTextColumn Header="描述"
+                                                        Binding="{Binding Description}"
+                                                        Width="150" />
+                                    <DataGridTemplateColumn Header="操作" Width="Auto">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button Content="安装"
+                                                        Classes="link"
+                                                        Background="Transparent"
+                                                        BorderThickness="0"
+                                                        Foreground="#4D94FF"
+                                                        Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).InstallModelCommand}"
+                                                        CommandParameter="{Binding Url}"
+                                                        Margin="5,0" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
                     </StackPanel>
-                </StackPanel>
-            </Border>
-            
-            <!-- 大语言模型应用推荐 -->
-            <Border Classes="item">
-                <StackPanel>
-                    <Grid ColumnDefinitions="Auto,Auto,*">
-                        <lucideAvalonia:Lucide Grid.Column="0" Icon="Sparkles" StrokeBrush="White" StrokeThickness="1.5"
-                                           Width="22" Height="22" />
-                        <TextBlock Grid.Column="1" Classes="title" Text="推荐工具" />
-                        <TextBlock Grid.Column="2" Classes="value" Text="其他优秀的大语言模型应用" />
-                    </Grid>
-                    
-                    <!-- Cherry Studio -->
-                    <Border Margin="10,10,0,0" Padding="10" Background="#252528" CornerRadius="4">
-                        <Grid ColumnDefinitions="Auto,*">
-                            <Border Grid.Column="0" Background="#FF4081" CornerRadius="4" Width="32" Height="32" Margin="0,0,10,0">
-                                <TextBlock Text="C" FontWeight="Bold" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
-                            </Border>
-                            <StackPanel Grid.Column="1">
-                                <TextBlock Text="Cherry Studio" FontWeight="Bold" Foreground="White" />
-                                <TextBlock Text="功能丰富的AI助手，支持多种大语言模型，提供对话、绘图等功能" 
-                                           Foreground="#CCCCCC" TextWrapping="Wrap" Margin="0,5,0,0" FontSize="12" />
-                                <Button Content="官网" Classes="link" Foreground="#4D94FF" Margin="0,5,0,0" 
-                                        Padding="0" Background="Transparent" BorderThickness="0"
-                                        Command="{Binding OpenBrowserCommand}"
-                                        CommandParameter="https://docs.cherry-ai.com/" />
-                            </StackPanel>
-                        </Grid>
-                    </Border>
-                    
-                    <!-- LM Studio -->
-                    <Border Margin="10,10,0,0" Padding="10" Background="#252528" CornerRadius="4">
-                        <Grid ColumnDefinitions="Auto,*">
-                            <Border Grid.Column="0" Background="#4CAF50" CornerRadius="4" Width="32" Height="32" Margin="0,0,10,0">
-                                <TextBlock Text="L" FontWeight="Bold" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
-                            </Border>
-                            <StackPanel Grid.Column="1">
-                                <TextBlock Text="LM Studio" FontWeight="Bold" Foreground="White" />
-                                <TextBlock Text="本地运行大语言模型的桌面应用，支持多种开源模型，提供简洁的用户界面" 
-                                           Foreground="#CCCCCC" TextWrapping="Wrap" Margin="0,5,0,0" FontSize="12" />
-                                <Button Content="官网" Classes="link" Foreground="#4D94FF" Margin="0,5,0,0" 
-                                        Padding="0" Background="Transparent" BorderThickness="0" />
-                            </StackPanel>
-                        </Grid>
-                    </Border>
-                </StackPanel>
-            </Border>
+                </Border>
+
+
             </StackPanel>
         </ScrollViewer>
     </Border>
