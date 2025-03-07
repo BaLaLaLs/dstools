@@ -62,39 +62,64 @@
             <StackPanel>
             <!-- CPU -->
             <Border Classes="item">
-                <Grid ColumnDefinitions="Auto, Auto, *">
-                    <lucideAvalonia:Lucide Grid.Column="0" Icon="Cpu" StrokeBrush="White" StrokeThickness="1.5"
+                <StackPanel>
+                    <Grid ColumnDefinitions="Auto,Auto,*">
+                        <lucideAvalonia:Lucide Grid.Column="0" Icon="Cpu" StrokeBrush="White" StrokeThickness="1.5"
                                            Width="22" Height="22" />
-                    <TextBlock Grid.Column="1" Classes="title" Text="处理器" />
-                    <TextBlock Grid.Column="2" Classes="value" Text="{Binding HardwareInfo.CpuName}" />
-                </Grid>
+                        <TextBlock Grid.Column="1" Classes="title" Text="硬件信息" />
+                        <TextBlock Grid.Column="2" Classes="value" Text="系统硬件配置信息" />
+                    </Grid>
+                    
+                    <!-- CPU Info -->
+                    <Border Margin="10,10,0,0" Padding="10" Background="#252528" CornerRadius="4">
+                        <Grid ColumnDefinitions="Auto,*">
+                            <Border Grid.Column="0" Background="#2196F3" CornerRadius="4" Width="32" Height="32" Margin="0,0,10,0">
+                                <lucideAvalonia:Lucide Icon="Cpu" StrokeBrush="White" StrokeThickness="1.5" Width="22" Height="22"/>
+                            </Border>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="处理器" FontWeight="Bold" Foreground="White" />
+                                <TextBlock Text="{Binding HardwareInfo.CpuName}" 
+                                           Foreground="#CCCCCC" TextWrapping="Wrap" Margin="0,5,0,0" FontSize="12" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                    
+                    <!-- GPU Info -->
+                    <Border Margin="10,10,0,0" Padding="10" Background="#252528" CornerRadius="4">
+                        <Grid ColumnDefinitions="Auto,*">
+                            <Border Grid.Column="0" Background="#9C27B0" CornerRadius="4" Width="32" Height="32" Margin="0,0,10,0">
+                                <lucideAvalonia:Lucide Icon="Microchip" StrokeBrush="White" StrokeThickness="1.5" Width="22" Height="22"/>
+                            </Border>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="显卡" FontWeight="Bold" Foreground="White" />
+                                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                    <TextBlock Text="{Binding HardwareInfo.GpuName}" 
+                                               Foreground="#CCCCCC" TextWrapping="Wrap" FontSize="12" />
+                                    <TextBlock Text=" | 显存: " 
+                                               Foreground="#CCCCCC" TextWrapping="Wrap" FontSize="12" />
+                                    <TextBlock Text="{Binding HardwareInfo.GpuMemory, StringFormat={}{0}G}" 
+                                               Foreground="#CCCCCC" TextWrapping="Wrap" FontSize="12" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                    
+                    <!-- Memory Info -->
+                    <Border Margin="10,10,0,0" Padding="10" Background="#252528" CornerRadius="4">
+                        <Grid ColumnDefinitions="Auto,*">
+                            <Border Grid.Column="0" Background="#4CAF50" CornerRadius="4" Width="32" Height="32" Margin="0,0,10,0">
+                                <lucideAvalonia:Lucide Icon="MemoryStick" StrokeBrush="White" StrokeThickness="1.5" Width="22" Height="22"/>
+                            </Border>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="内存" FontWeight="Bold" Foreground="White" />
+                                <TextBlock Text="{Binding HardwareInfo.TotalMemory, StringFormat={}{0:F0} GB}" 
+                                           Foreground="#CCCCCC" TextWrapping="Wrap" Margin="0,5,0,0" FontSize="12" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </StackPanel>
             </Border>
-
-            <!-- GPU -->
-            <Border Classes="item">
-                <Grid ColumnDefinitions="Auto,Auto,*">
-                    <lucideAvalonia:Lucide Grid.Column="0" Icon="Microchip" StrokeBrush="White" StrokeThickness="1.5"
-                                           Width="22" Height="22" />
-                    <TextBlock Grid.Column="1" Classes="title" Text="显卡" />
-                    <StackPanel Grid.Column="2" Orientation="Horizontal">
-                        <TextBlock Classes="value" Text="{Binding HardwareInfo.GpuName}" />
-                        <TextBlock Classes="value" Text=" 显存：" />
-                        <TextBlock Classes="value" Text="{Binding HardwareInfo.GpuMemory, StringFormat={}{0}G}" />
-                    </StackPanel>
-                </Grid>
-            </Border>
-
-            <!-- Memory -->
-            <Border Classes="item">
-                <Grid ColumnDefinitions="Auto,Auto,*">
-                    <lucideAvalonia:Lucide Grid.Column="0" Icon="MemoryStick" StrokeBrush="White" StrokeThickness="1.5"
-                                           Width="22" Height="22" />
-                    <TextBlock Grid.Column="1" Classes="title" Text="内存" />
-                    <TextBlock Grid.Column="2" Classes="value"
-                               Text="{Binding HardwareInfo.TotalMemory, StringFormat={}{0:F0} GB}" />
-                </Grid>
-            </Border>
-
+            
             <!-- Ollama -->
             <Border Classes="item">
                 <StackPanel>
