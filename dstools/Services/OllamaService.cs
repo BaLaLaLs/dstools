@@ -265,7 +265,7 @@ public class OllamaService : IOllamaService
 
         return models;
     }
-    
+
     public async Task<bool> DeleteModel(string modelName)
     {
         try
@@ -298,22 +298,30 @@ public class OllamaService : IOllamaService
         {
             new()
             {
-                Name = "deepseek-coder:1.5b", Size = 4.2, Description = "DeepSeek Coder 6.7B 基础版",
-                Url = ""
+                Name = "deepseek-r1:7b", Size = 4.7, Description = "deepseek-r1:7b q4量化 性能较好，硬件要求适中",
+                Url = "modelscope.cn/unsloth/DeepSeek-R1-Distill-Qwen-7B-GGUF"
             },
             new()
             {
-                Name = "DeepSeek-R1-Distill-Qwen-7B-GGUF", Size = 4.68, Description = "DeepSeek-R1-Distill-Qwen-7B-GGUF",
-                Url = "modelscope.cn/unsloth/DeepSeek-R1-Distill-Qwen-7B-GGUF:DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf"
-            },
-            new() { Name = "deepseek-r1:14b", Size = 19.5, Description = "deepseek-r1:14b版", Url = "modelscope.cn/unsloth/DeepSeek-R1-Distill-Qwen-14B-GGUF:Q4_K_M" },
-            new()
-            {
-                Name = "deepseek-coder:6.7b-instruct", Size = 4.2, Description = "DeepSeek Coder 6.7B 对话版", Url = ""
+                Name = "deepseek-r1:8b", Size = 4.9, Description = "deepseek-r1:8b q4量化 略强于 7b，精度更高",
+                Url = "modelscope.cn/unsloth/DeepSeek-R1-Distill-Llama-8B-GGUF"
             },
             new()
             {
-                Name = "deepseek-coder:33b-instruct", Size = 19.5, Description = "DeepSeek Coder 33B 对话版", Url = ""
+                Name = "deepseek-r1:14b", Size = 9.0, Description = "deepseek-r1:14b 高性能，擅长复杂任务，如数学推理、代码生成",
+                Url = "modelscope.cn/unsloth/DeepSeek-R1-Distill-Qwen-14B-GGUF"
+            },
+            new()
+            {
+                Name = "deepseek-r1:32b", Size = 19, Description = "专业级，适合高精度任务", Url = "modelscope.cn/unsloth/DeepSeek-R1-Distill-Qwen-32B-GGUF"
+            },
+            new()
+            {
+                Name = "deepseek-r1:70b", Size = 42, Description = "deepseek-r1:70b 顶级模型，适合大规模计算和高复杂度任务", Url = "modelscope.cn/unsloth/DeepSeek-R1-Distill-Llama-70B-GGUF"
+            },
+            new()
+            {
+                Name = "QwQ:32b", Size = 19, Description = "通义千问 新出的模型各项分值和ds 671b差不多", Url = "modelscope.cn/Qwen/QwQ-32B-GGUF"
             }
         };
     }
@@ -366,21 +374,23 @@ public class OllamaService : IOllamaService
 
         return string.Empty;
     }
+
     // 获取Ollama 模型安装位置
     public string GetModelInstallPath()
     {
         try
         {
             // 首先尝试从环境变量获取
-            string modelPath = Environment.GetEnvironmentVariable("OLLAMA_MODELS", EnvironmentVariableTarget.User) ?? "";
-            
+            string modelPath = Environment.GetEnvironmentVariable("OLLAMA_MODELS", EnvironmentVariableTarget.User) ??
+                               "";
+
             // 如果环境变量未设置，使用默认路径
             if (string.IsNullOrEmpty(modelPath))
             {
                 string userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 modelPath = Path.Combine(userProfile, ".ollama", "models");
             }
-            
+
             return modelPath;
         }
         catch (Exception ex)
@@ -389,6 +399,7 @@ public class OllamaService : IOllamaService
             return string.Empty;
         }
     }
+
     // 下载模型
     public async Task<bool> PullModel(String modelName)
     {
@@ -421,7 +432,7 @@ public class OllamaService : IOllamaService
 
             // 等待进程完成
             await Task.Run(() => process.WaitForExit());
-            
+
             // 检查退出代码
             if (process.ExitCode != 0)
             {
