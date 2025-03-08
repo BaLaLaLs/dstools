@@ -25,7 +25,6 @@ public enum RunningStatus
 {
     Running, // 运行中
     Stopped, // 已停止
-    NotRunning
 }
 
 public partial class MainWindowViewModel : ObservableObject
