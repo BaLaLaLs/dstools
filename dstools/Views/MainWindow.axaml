@@ -380,13 +380,13 @@
                                         <DataGrid.Columns>
                                             <DataGridTextColumn Header="模型名称"
                                                                 Binding="{Binding Name}"
-                                                                Width="*" />
+                                                                Width="180" />
                                             <DataGridTextColumn Header="大小"
                                                                 Binding="{Binding Size, StringFormat={}{0:N1}GB}"
                                                                 Width="100" />
                                             <DataGridTextColumn Header="描述"
                                                                 Binding="{Binding Description}"
-                                                                Width="150" />
+                                                                Width="*" />
                                             <DataGridTemplateColumn Header="操作" Width="Auto">
                                                 <DataGridTemplateColumn.CellTemplate>
                                                     <DataTemplate>
