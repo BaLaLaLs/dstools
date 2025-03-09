@@ -5,13 +5,13 @@ using dstools.ViewModels;
 
 namespace dstools.Converters
 {
-    public class OllamaRunningStatusConverter : IValueConverter
+    public class OllamaStoppedStatusConverter : IValueConverter
     {
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if (value is RunningStatus status)
             {
-                return status == RunningStatus.Running;
+                return status == RunningStatus.Stopped;
             }
             
             return false;

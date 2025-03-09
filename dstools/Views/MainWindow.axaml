@@ -18,6 +18,7 @@
         <converters:OllamaNotInstalledConverter x:Key="OllamaNotInstalledConverter" />
         <converters:OllamaRunningStatusConverter x:Key="OllamaRunningStatusConverter" />
         <converters:OllamaInstalledConverter x:Key="OllamaInstalledConverter" />
+        <converters:OllamaStoppedStatusConverter x:Key="OllamaStoppedStatusConverter"/>
         <converters:DebugConverter x:Key="DebugConverter" />
     </Window.Resources>
 
@@ -224,11 +225,11 @@
                                                 Text="{Binding OllamaInfo.InstallStatus, Converter={StaticResource OllamaStatusConverter}}"
                                                 Foreground="#CCCCCC" FontSize="12" />
                                             <TextBlock Text="   运行状态：" Foreground="#CCCCCC" FontSize="12"
-                                                       IsVisible="{Binding OllamaInfo.InstallStatus, Converter={StaticResource OllamaNotInstalledConverter}}" />
+                                                       IsVisible="{Binding OllamaInfo.InstallStatus, Converter={StaticResource OllamaInstalledConverter}}" />
                                             <TextBlock
                                                 Text="{Binding OllamaInfo.RunningStatus, Converter={StaticResource OllamaStatusConverter}}"
                                                 Foreground="#CCCCCC" FontSize="12"
-                                                IsVisible="{Binding OllamaInfo.InstallStatus, Converter={StaticResource OllamaNotInstalledConverter}}" />
+                                                IsVisible="{Binding OllamaInfo.InstallStatus, Converter={StaticResource OllamaInstalledConverter}}" />
                                         </StackPanel>
                                     </StackPanel>
                                 </Grid>
@@ -247,7 +248,7 @@
                                         <TextBlock Text="{Binding OllamaInfo.Version}"
                                                    Foreground="#CCCCCC" TextWrapping="Wrap" Margin="0,5,0,0"
                                                    FontSize="12"
-                                                   IsVisible="{Binding OllamaInfo.RunningStatus,  Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaRunningStatusConverter}}"  />
+                                                   IsVisible="{Binding OllamaInfo.RunningStatus, Converter={StaticResource OllamaRunningStatusConverter}}"  />
                                     </StackPanel>
                                 </Grid>
                             </Border>
@@ -266,12 +267,12 @@
                                             <Button Classes="accent" Content="启动"
                                                     Command="{Binding StartOllamaCommand}"
                                                     IsVisible="{Binding OllamaInfo.InstallStatus, Converter={StaticResource OllamaInstalledConverter}}"
-                                                    IsEnabled="{Binding OllamaInfo.RunningStatus, Converter={StaticResource OllamaRunningStatusConverter}}"
+                                                    IsEnabled="{Binding OllamaInfo.RunningStatus, Converter={StaticResource OllamaStoppedStatusConverter}}"
                                                     Margin="0,0,10,0" />
                                             <Button Classes="accent" Content="停止"
                                                     Command="{Binding StopOllamaCommand}"
                                                     IsVisible="{Binding OllamaInfo.InstallStatus, Converter={StaticResource OllamaInstalledConverter}}"
-                                                    IsEnabled="{Binding OllamaInfo.RunningStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaRunningStatusConverter}}" />
+                                                    IsEnabled="{Binding OllamaInfo.RunningStatus, Converter={StaticResource OllamaRunningStatusConverter}}" />
                                         </StackPanel>
                                     </StackPanel>
                                 </Grid>
