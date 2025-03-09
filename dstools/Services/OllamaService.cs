@@ -112,62 +112,66 @@ public class OllamaService : IOllamaService
         return info;
     }
 
-    public async Task<bool> InstallOllama(IProgress<double> progress)
+   public async Task<bool> InstallOllama(IProgress<double> progress)
+{
+    try
     {
-        try
-        {
-            string downloadUrl =
-                "https://ghfast.top/https://github.com/ollama/ollama/releases/latest/download/OllamaSetup.exe";
-            string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            string setupPath = Path.Combine(appDirectory, "OllamaSetup.exe");
+        string downloadUrl = "https://ghfast.top/https://github.com/ollama/ollama/releases/latest/download/OllamaSetup.exe";
+        string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
+        string setupPath = Path.Combine(appDirectory, "OllamaSetup.exe");
 
-            using var response = await _httpClient.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead);
+        // 下载文件
+        using (var response = await _httpClient.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead))
+        {
             response.EnsureSuccessStatusCode();
             var totalBytes = response.Content.Headers.ContentLength ?? -1L;
 
-            await using var stream = await response.Content.ReadAsStreamAsync();
-            await using var fileStream = new FileStream(setupPath, FileMode.Create, FileAccess.Write, FileShare.None);
-            var buffer = new byte[8192];
-            var totalBytesRead = 0L;
-            int bytesRead;
-
-            while ((bytesRead = await stream.ReadAsync(buffer)) > 0)
+            await using (var stream = await response.Content.ReadAsStreamAsync())
+            await using (var fileStream = new FileStream(setupPath, FileMode.Create, FileAccess.Write, FileShare.None))
             {
-                await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead));
-                totalBytesRead += bytesRead;
-                if (totalBytes > 0)
-                {
-                    progress.Report((double)totalBytesRead / totalBytes * 100);
-                }
-            }
+                var buffer = new byte[8192];
+                var totalBytesRead = 0L;
+                int bytesRead;
 
-            var process = new Process
-            {
-                StartInfo = new ProcessStartInfo
+                while ((bytesRead = await stream.ReadAsync(buffer.AsMemory(0, buffer.Length))) > 0)
                 {
-                    FileName = setupPath,
-                    UseShellExecute = true,
-                    Verb = "runas"
+                    await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead));
+                    totalBytesRead += bytesRead;
+                    if (totalBytes > 0)
+                    {
+                        progress.Report((double)totalBytesRead / totalBytes * 100);
+                    }
                 }
-            };
-            process.Start();
-            await Task.Run(() =>
-            {
-                process.WaitForExit();
-                if (File.Exists(setupPath))
-                {
-                    File.Delete(setupPath);
-                }
-            });
+            } // 确保这里关闭了 fileStream 和 stream
+        } // 确保这里关闭了 HTTP 响应
 
-            return true;
-        }
-        catch (Exception ex)
+        // 安装过程
+        var process = new Process
         {
-            Debug.WriteLine($"安装Ollama时出错: {ex.Message}");
-            return false;
+            StartInfo = new ProcessStartInfo
+            {
+                FileName = setupPath,
+                UseShellExecute = true,
+                Verb = "runas"
+            }
+        };
+        process.Start();
+
+        process.WaitForExit(); // 不需要 Task.Run 包裹，直接等待即可
+
+        if (File.Exists(setupPath))
+        {
+            File.Delete(setupPath);
         }
+
+        return true;
     }
+    catch (Exception ex)
+    {
+        Debug.WriteLine($"安装Ollama时出错: {ex.Message}");
+        return false;
+    }
+}
 
     public async Task<bool> StartOllama()
     {
