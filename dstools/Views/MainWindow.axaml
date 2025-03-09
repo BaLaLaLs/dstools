@@ -212,19 +212,18 @@
                                                 Text="{Binding OllamaInfo.InstallStatus, Converter={StaticResource OllamaStatusConverter}}"
                                                 Foreground="#CCCCCC" FontSize="12" />
                                             <TextBlock Text="   运行状态：" Foreground="#CCCCCC" FontSize="12"
-                                                       IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}" />
+                                                       IsVisible="{Binding OllamaInfo.InstallStatus, Converter={StaticResource OllamaNotInstalledConverter}}" />
                                             <TextBlock
                                                 Text="{Binding OllamaInfo.RunningStatus, Converter={StaticResource OllamaStatusConverter}}"
                                                 Foreground="#CCCCCC" FontSize="12"
-                                                IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}" />
+                                                IsVisible="{Binding OllamaInfo.InstallStatus, Converter={StaticResource OllamaNotInstalledConverter}}" />
                                         </StackPanel>
                                     </StackPanel>
                                 </Grid>
                             </Border>
                             <Border Grid.Column="1" Margin="10,10,0,0" Padding="10" Background="#252528"
                                     CornerRadius="4">
-                                <Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="0,0,0,0"
-                                      IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}">
+                                <Grid ColumnDefinitions="Auto,*" Margin="0,0,0,0">
                                     <Border Grid.Column="0" Background="#9C27B0" CornerRadius="4" Width="32"
                                             Height="32" Margin="0,0,10,0">
                                         <lucideAvalonia:Lucide Icon="Info" StrokeBrush="White"
@@ -263,12 +262,12 @@
                                                        Margin="0,0,10,0" />
                                             <Button Classes="accent" Content="启动"
                                                     Command="{Binding StartOllamaCommand}"
-                                                    IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}"
+                                                    IsVisible="{Binding OllamaInfo.InstallStatus, Converter={StaticResource OllamaNotInstalledConverter}}"
                                                     IsEnabled="{Binding OllamaInfo.RunningStatus, Converter={StaticResource OllamaRunningStatusConverter}}"
                                                     Margin="0,0,10,0" />
                                             <Button Classes="accent" Content="停止"
                                                     Command="{Binding StopOllamaCommand}"
-                                                    IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}"
+                                                    IsVisible="{Binding OllamaInfo.InstallStatus, Converter={StaticResource OllamaNotInstalledConverter}}"
                                                     IsEnabled="{Binding OllamaInfo.RunningStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaRunningStatusConverter}}" />
                                         </StackPanel>
                                     </StackPanel>
@@ -278,7 +277,7 @@
 
                         <!-- 模型路径卡片 -->
                         <Border Margin="10,10,0,0" Padding="10" Background="#252528" CornerRadius="4"
-                                IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}">
+                                IsVisible="{Binding OllamaInfo.InstallStatus, Converter={StaticResource OllamaNotInstalledConverter}}">
                             <Grid ColumnDefinitions="Auto,*">
                                 <Border Grid.Column="0" Background="#FF9800" CornerRadius="4" Width="32"
                                         Height="32" Margin="0,0,10,0">
@@ -301,7 +300,7 @@
 
                         <!-- 模型列表区域 -->
                         <Border Margin="10,10,0,0" Padding="10" Background="#252528" CornerRadius="4"
-                                IsVisible="{Binding OllamaInfo.InstallStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaNotInstalledConverter}}">
+                                IsVisible="{Binding OllamaInfo.InstallStatus, Converter={StaticResource OllamaNotInstalledConverter}}">
                             <Grid ColumnDefinitions="Auto,*">
                                 <Border Grid.Column="0" Background="#E91E63" CornerRadius="4" Width="32"
                                         Height="32" Margin="0,0,10,0" VerticalAlignment="Top">

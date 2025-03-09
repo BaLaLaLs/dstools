@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
+using dstools.ViewModels;
 
 namespace dstools.Converters
 {
@@ -8,11 +9,11 @@ namespace dstools.Converters
     {
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            if (value is bool isNotInstalled)
+            if (value is InstallStatus status)
             {
-                // 如果传入的是安装状态，则取反
-                // true表示未安装，false表示已安装
-                return isNotInstalled;
+                // 如果是已安装状态，返回true以显示相关模块
+                // 如果是未安装状态，返回false以隐藏相关模块
+                return status == InstallStatus.Installed;
             }
 
             return false;
