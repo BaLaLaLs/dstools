@@ -17,6 +17,7 @@
         <converters:OllamaStatusConverter x:Key="OllamaStatusConverter" />
         <converters:OllamaNotInstalledConverter x:Key="OllamaNotInstalledConverter" />
         <converters:OllamaRunningStatusConverter x:Key="OllamaRunningStatusConverter" />
+        <converters:OllamaInstalledConverter x:Key="OllamaInstalledConverter" />
         <converters:DebugConverter x:Key="DebugConverter" />
     </Window.Resources>
 
@@ -262,12 +263,12 @@
                                                        Margin="0,0,10,0" />
                                             <Button Classes="accent" Content="启动"
                                                     Command="{Binding StartOllamaCommand}"
-                                                    IsVisible="{Binding OllamaInfo.InstallStatus, Converter={StaticResource OllamaNotInstalledConverter}}"
+                                                    IsVisible="{Binding OllamaInfo.InstallStatus, Converter={StaticResource OllamaInstalledConverter}}"
                                                     IsEnabled="{Binding OllamaInfo.RunningStatus, Converter={StaticResource OllamaRunningStatusConverter}}"
                                                     Margin="0,0,10,0" />
                                             <Button Classes="accent" Content="停止"
                                                     Command="{Binding StopOllamaCommand}"
-                                                    IsVisible="{Binding OllamaInfo.InstallStatus, Converter={StaticResource OllamaNotInstalledConverter}}"
+                                                    IsVisible="{Binding OllamaInfo.InstallStatus, Converter={StaticResource OllamaInstalledConverter}}"
                                                     IsEnabled="{Binding OllamaInfo.RunningStatus, Converter={x:Static BoolConverters.Not}, ConverterParameter={StaticResource OllamaRunningStatusConverter}}" />
                                         </StackPanel>
                                     </StackPanel>
@@ -277,7 +278,7 @@
 
                         <!-- 模型路径卡片 -->
                         <Border Margin="10,10,0,0" Padding="10" Background="#252528" CornerRadius="4"
-                                IsVisible="{Binding OllamaInfo.InstallStatus, Converter={StaticResource OllamaNotInstalledConverter}}">
+                                IsVisible="{Binding OllamaInfo.InstallStatus, Converter={StaticResource OllamaInstalledConverter}}">
                             <Grid ColumnDefinitions="Auto,*">
                                 <Border Grid.Column="0" Background="#FF9800" CornerRadius="4" Width="32"
                                         Height="32" Margin="0,0,10,0">
@@ -300,7 +301,7 @@
 
                         <!-- 模型列表区域 -->
                         <Border Margin="10,10,0,0" Padding="10" Background="#252528" CornerRadius="4"
-                                IsVisible="{Binding OllamaInfo.InstallStatus, Converter={StaticResource OllamaNotInstalledConverter}}">
+                                IsVisible="{Binding OllamaInfo.InstallStatus, Converter={StaticResource OllamaInstalledConverter}}">
                             <Grid ColumnDefinitions="Auto,*">
                                 <Border Grid.Column="0" Background="#E91E63" CornerRadius="4" Width="32"
                                         Height="32" Margin="0,0,10,0" VerticalAlignment="Top">
