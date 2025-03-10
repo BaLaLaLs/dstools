@@ -72,7 +72,7 @@ public partial class MainWindowViewModel : ObservableObject
         if (!success)
         {
             HasError = true;
-            ErrorMessage = "安装失败";
+            ErrorMessage = "安装失败请重试";
         }
 
         IsDownloading = false;

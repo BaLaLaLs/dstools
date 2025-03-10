@@ -116,7 +116,10 @@ public class OllamaService : IOllamaService
 {
     try
     {
-        string downloadUrl = "https://ghfast.top/https://github.com/ollama/ollama/releases/latest/download/OllamaSetup.exe";
+        // string downloadUrl = "https://ghfast.top/https://github.com/ollama/ollama/releases/latest/download/OllamaSetup.exe";
+        // string downloadUrl = "https://download-cf.ocoolai.com/https://github.com/ollama/ollama/releases/latest/download/OllamaSetup.exe";
+        string downloadUrl =
+            "https://download.ocoolai.com/https://github.com/ollama/ollama/releases/latest/download/OllamaSetup.exe";
         string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
         string setupPath = Path.Combine(appDirectory, "OllamaSetup.exe");
 
