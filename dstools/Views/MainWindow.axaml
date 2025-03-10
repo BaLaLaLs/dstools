@@ -9,7 +9,7 @@
         x:DataType="vm:MainWindowViewModel"
         xmlns:lucideAvalonia="clr-namespace:LucideAvalonia;assembly=LucideAvalonia"
         Icon="/Assets/logo.png"
-        Title="DeepSeek部署工具"
+        Title="DeepSeek部署工具V1.0-免费软件 B站：C丶绮梦"
         Width="1000"
         Height="1010">
 
