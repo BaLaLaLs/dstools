@@ -8,10 +8,10 @@
         x:Class="dstools.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         xmlns:lucideAvalonia="clr-namespace:LucideAvalonia;assembly=LucideAvalonia"
-        Icon="/Assets/avalonia-logo.ico"
+        Icon="/Assets/logo.png"
         Title="DeepSeek部署工具"
         Width="1000"
-        Height="900">
+        Height="1010">
 
     <Window.Resources>
         <converters:OllamaStatusConverter x:Key="OllamaStatusConverter" />
@@ -139,7 +139,7 @@
                                                        StrokeThickness="1.5"
                                                        Width="22" Height="22" />
                                 <TextBlock Grid.Column="1" Classes="title" Text="推荐工具" />
-                                <TextBlock Grid.Column="2" Classes="value" Text="其他优秀的大语言模型应用" />
+                                <TextBlock Grid.Column="2" Classes="value" Text="Ollama 前端工具" />
                             </Grid>
 
                             <!-- Cherry Studio -->
@@ -213,7 +213,7 @@
                             <Border Grid.Column="0" Margin="10,10,0,0" Padding="10" Background="#252528"
                                     CornerRadius="4">
                                 <Grid ColumnDefinitions="Auto,*">
-                                    <Border Grid.Column="0" Background="#2196F3" CornerRadius="4" Width="32"
+                                    <Border Grid.Column="0" Background="White" CornerRadius="4" Width="32"
                                             Height="32" Margin="0,0,10,0">
                                         <Image Source="/Assets/ollama.png" Width="22" Height="22" />
                                     </Border>
@@ -317,7 +317,7 @@
                                     <!-- 已安装模型列表 -->
                                     <TextBlock Text="已安装模型" Foreground="#CCCCCC" Margin="0,10,0,5" FontSize="12" />
                                     <DataGrid ItemsSource="{Binding OllamaInfo.InstalledModels}"
-                                              MinHeight="100"
+                                              MinHeight="200"
                                               AutoGenerateColumns="False"
                                               IsReadOnly="True"
                                               GridLinesVisibility="All"
@@ -362,7 +362,7 @@
                                     <!-- 可安装模型列表 -->
                                     <TextBlock Text="可安装模型" Foreground="#CCCCCC" Margin="0,15,0,5" FontSize="12" />
                                     <DataGrid ItemsSource="{Binding OllamaInfo.AvailableModels}"
-                                              MinHeight="100"
+                                              MinHeight="200"
                                               AutoGenerateColumns="False"
                                               IsReadOnly="True"
                                               GridLinesVisibility="All"
