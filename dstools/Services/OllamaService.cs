@@ -217,7 +217,7 @@ public class OllamaService : IOllamaService
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = "powershell",
-                    Arguments = "-Command \"Stop-Process -Name ollama -Force -ErrorAction SilentlyContinue\"",
+                    Arguments = "-Command \"Stop-Process -Name 'Ollama', 'ollama' -Force -ErrorAction SilentlyContinue\"",
                     RedirectStandardOutput = true,
                     UseShellExecute = false,
                     CreateNoWindow = true
